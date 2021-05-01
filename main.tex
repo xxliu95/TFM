@@ -9,11 +9,12 @@
 \usepackage{acronym}
 \usepackage{siunitx}
 \usepackage{eurosym}
-\usepackage{indentfirst}
+% \usepackage{indentfirst}
 \usepackage{bookmark}
 \usepackage{blindtext}
 \usepackage[titletoc]{appendix}
-
+% \usepackage[backend=biber,
+% style=apa]{biblatex}
 
 % \renewcommand{\familydefault}{\sfdefault}
 
@@ -358,17 +359,17 @@
 % \include{4-case-study}
 \include{5-conclusions}
 
-% \cleardoublepage
-% \pagenumbering{roman}
-% \cleardoublepage
-% \phantomsection
-% \nocite{*}
-% \addcontentsline{toc}{chapter}{Referencias}   % ieeetr
+\cleardoublepage
+\pagenumbering{roman}
+\cleardoublepage
+\phantomsection
+\nocite{*}
+\addcontentsline{toc}{chapter}{References}   % ieeetr
 % \bibliographystyle{unsrt}
-% \bibliographystyle{plain}{
-%     \small
-%     \bibliography{biblio/ref}
-% }
+\bibliographystyle{plain}{
+    \small
+    \bibliography{biblio/ref}
+}
 
 \appendix
 \begin{appendices}
