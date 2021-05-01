@@ -137,10 +137,11 @@
 % \usepackage[usenames,dvipsnames,table]{xcolor}
 % \bibliographystyle{unsrt}
 
-\newcommand{\authorname}{XINXIN LIU}
-\newcommand{\tfmtitle}{FULL TITLE OF THE THESIS}
-\newcommand{\tfmtitlees}{TITULO COMPLETO DEL TFM}
-\newcommand{\supervisor}{NOMBRE DEL TUTOR}
+\newcommand{\authorname}{Xinxin Liu}
+\newcommand{\tfmtitle}{Design and implementation of an ABR video streaming simulation module for NS-3. Analysis and comparison of ABR video streaming algorithms over various mobile network scenarios.}
+\newcommand{\tfmtitlees}{Diseño e implementación de un módulo de ABR video streaming para NS-3. Análisis y comparación de algoritmos de ABR video streaming sobre varios escenarios de redes móviles.}
+\newcommand{\supervisor}{Marcus Ihlar}
+\newcommand{\ponent}{Carlos Mariano Lentisco Sanchez}
 \newcommand{\fecha}{Junio 2021}
 
 % \usepackage[pdftex,
@@ -265,14 +266,24 @@
 % Allows to change the color of chapter headers
 \definecolor{chapterdetails}{HTML}{1387c4}
 
-\usepackage[sf,bf]{titlesec}
-\titleformat{\chapter}[display]
-  {\normalfont\Large\sffamily\raggedleft}
-  {\vspace{5cm}\MakeUppercase{\chaptertitlename}%
-    \rlap{ \resizebox{!}{1.5cm}{\thechapter} \color{chapterdetails}\rule{5cm}{1.5cm}}}
-  {10pt}{\Huge}[{\color{chapterdetails}\titlerule[0.8mm] }]
-\titlespacing*{\chapter}{0pt}{30pt}{20pt}
-\titlespacing*{\section}{0pt}{20pt}{10pt}
+\usepackage[sf,bf,outermarks]{titlesec}
+% \usepackage[explicit]{titlesec}
+
+\usepackage[T1]{fontenc}
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{10pt}}
+\titleformat{\chapter}[hang]{\normalfont\LARGE\bfseries}{\chaptername{ }\thechapter\hsp\Huge\textcolor{gray75}{\textbf{|}}\hsp}{0pt}{\huge\bfseries}
+% [{\color{chapterdetails}\titlerule[0.8mm] }]
+
+% \titleformat{\chapter}[display]
+%   {\normalfont\Large\sffamily\raggedleft}
+%   {\vspace{2cm}\MakeUppercase{\chaptertitlename}%
+%     \rlap{ \resizebox{!}{1.5cm}{\thechapter} \color{chapterdetails}\rule{5cm}{1.5cm}}}
+%   {10pt}{\Huge}[{\color{chapterdetails}\titlerule[0.8mm] }]
+% \titlespacing*{\chapter}{0pt}{0pt}{20pt}
+% \titlespacing*{\section}{0pt}{0pt}{20pt}
+
+
 
 % \titleformat{\section}{\large\sffamily\bfseries}{\thesection}{1em}{}
 

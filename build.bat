@@ -1,0 +1,1 @@
+START pdflatex main.tex --output-directory=build
