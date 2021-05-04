@@ -4,17 +4,106 @@
 \section{Context}
 \label{sec:context}
 
-
 There is no doubt about the importance of online video streaming.
 According to Sandvine \cite{sandvine1},
 in 2020, 57\% of the global internet traffic was used by video streaming.
 Moreover, one of the key predictions made by Cisco in 2018 \cite{cisco1}
-stated that by year 2022, video traffic will make up 82 percent 
-of all IP traffic.
-
+stated that by year 2022, video traffic will make up 82\% 
+of all \textit{IP} traffic.
 
 Consequently, numerous challenges arise. Due to the
 growth of the number and diversity of video capable connected 
 devices and every time more available bandwidth and better quality 
-contents, the video server needs to adapt the video content to
-the network and the devices. 
+contents, the client and the server need to adapt the video content to
+the network and the devices. The technique of taking account the 
+varying network conditions and computing resources of the user 
+device to choose the adequate quality level is denominated as
+\textit{Adaptive BitRate (ABR)}. Adaptation may be performed
+monitoring different paramaters such as estimated bandwidth,
+client's buffer level, CPU load or screen size.
+
+The \textit{Dynamic Adaptive Streaming over HTTP (DASH)} is one of the
+standards that implements Adaptive BitRate video streaming and was developed
+by the \textit{Moving Picture Experts Group (MPEG)}\cite{dash1}. \textit{MPEG-DASH} 
+enables provisioning and delivering media using existing \textit{HTTP}-delivery 
+networks supports dynamic adaptation with seamless switching.
+
+
+\begin{figure}[h]
+  \centering
+  \label{fig:chart1}
+  \includegraphics[width=0.8\textwidth]{img/chart1.png}
+  \caption{Global application category total traffic share during COVID-19 lockdown. Source: Sandvine\cite{sandvine1}}
+\end{figure}
+
+The \textit{MPEG-DASH} standard was published in 2012 and revised in 2019 
+by the \textit{International Organization for Standarization (ISO) / International 
+Electrotechnical Commision (IEC)} as \textit{MPEG-DASH ISO/IEC 23009-1:2019}
+\cite{ISO23009}.
+
+\textit{DASH} divides the media file into small chunks or segments.
+\textit{MPEG-DASH} defines the \textit{Media Presentation Description (MPD)}, 
+which is an XML-structured manifest file that contains the \textit{Universal Resource 
+Locators (URL)} of the segments. Different qualities are defined as representations,
+the \textit{MPD} file contains information for each representation such as the
+codec, bandwidth, the resolution of the video or framerate.
+
+However, the DASH Standard\cite{ISO23009} only defines the data formats
+for the media reproduction and do not provide the adaptation algorithm.
+The \textit{DASH Industry Forum}\cite{dash2} provides a open source \textit{MPEG-DASH} 
+player implented in \textit{JavaScript} with different adapation algorithms.
+Similarly, \textit{hls.js} is a implementation of an \textit{HTTP Live Streaming}\footnote{HTTP
+Live Streaming is an HTTP-based adaptive bitrate streaming protocol developed by Apple Inc.
+\cite{hls1}} client.
+
+The adaptation algorithms needs to be tested in different scenarios (real or simulated)
+and tweaked to provide the maximum perceived quality by the users. Also, there are
+algorithms that perform better in some specific scenarios and worse in others. The adaptation
+algorithm is the responsible of avoid problems that have a negative impact
+on the \textit{Quality of Experience (QoE)}. Firstly, the algorithm can overestimate
+the bandwidth and it would cause a pause in the reproduction because all the 
+segments in the buffer is emptied. The algorithm can also underestimate the bandwidth,
+the video player requests media segments with inferior quality than the quality at which the 
+bandwidth available of the network can allow. Lastly, the algorithm should avoid
+constant bitrate switches result of bandwidth fructuations, and provide a smooth and
+seamless video watching experience.
+
+The \textit{ns-3} simulator is a open-source and extensible discrete-event network simulator. 
+The extensible nature of this tool allows us to develop a new module for \textit{ns-3}
+mimicking the behaviour of \textit{ABR} clients and servers. With this new module, \textit{ns-3} 
+will be able to simulate extreme network scenarios and test the performance of 
+various adaptation algorithms.
+
+\section{Objectives}
+\label{sec:objectives}
+The objectives of this thesis is to build a framework for testing \textit{ABR} adaptation
+algorithms, and implement some adaptation algorithms and compare them in 
+various mobile network scenarios with different objective \textit{QoE} metrics. 
+In order to achieve the proposed objectives, the following steps will be proposed:
+
+\begin{enumerate}
+  \item Study and understand \textit{ns-3} and basic modules such as the core module, the
+  internet module, applications module, \textit{LENA} module among others. Build basic \textit{LTE} scenarios
+  tweak radio paramaters, and output results.
+  \item Design a new module in \text{ns-3} that simulates behaviours of \textit{ABR} clients
+  and servers. Study and implement existing adaptation algorithms.
+  \item Define and implement objective \textit{QoE} metrics.
+  Build new \textit{LTE} scenarios and compare the perfomances of the implemented adaptation
+  algorithms.
+\end{enumerate}
+
+
+\section{Structure of the thesis}
+\label{sec:structure}
+
+% The memory of this work is structured as follow:
+
+\textbf{\textit{Chapter 1.}} Presents the context, the motivations and the objectives of this thesis.
+
+\textbf{\textit{Chapter 2.}} The State of the Art. BBBBBBB
+
+\textbf{\textit{Chapter 3.}} dddd
+
+\textbf{\textit{Chapter 4.}} dddd
+
+\textbf{\textit{Chapter 5.}} dddd

@@ -9,10 +9,14 @@
 \usepackage{acronym}
 \usepackage{siunitx}
 \usepackage{eurosym}
-% \usepackage{indentfirst}
+\usepackage{indentfirst}
 \usepackage{bookmark}
 \usepackage{blindtext}
 \usepackage[titletoc]{appendix}
+\usepackage[acronym]{glossaries}
+
+% \makeglossaries
+
 % \usepackage[backend=biber,
 % style=apa]{biblatex}
 
@@ -117,6 +121,10 @@
 % \captionsetup[lstlisting]{singlelinecheck=false, labelfont={blue}, textfont={blue}}
 
 % \usepackage{caption}
+
+\usepackage[format=plain,
+            labelfont={bf,it},
+            textfont=it]{caption}
 
 % \DeclareCaptionFont{white}{\color{white}}
 % \DeclareCaptionFormat{listing}{\colorbox[HTML]{6DBAFF}{\parbox{\textwidth}{\hspace{5pt}#1#2#3}}}
@@ -343,6 +351,7 @@
 \include{A-resumen}
 \include{B-agradecimientos}
 \include{C-contents}
+\include{D-glossary}
 
 % Header style
 \pagestyle{fancy}
