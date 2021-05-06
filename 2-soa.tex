@@ -4,17 +4,103 @@
 In this chapter we ....
 
 
-\section{Adaptive Video Streaming}
+\section{ABR Video Streaming}
 \label{sec:abr}
 
-\subsection{History}
-\label{sec:abrhistory}
+There are three ways of media delivery over \textit{HTTP}. The first method is by
+\textbf{file download}, the media file is entirely stored in a local hard drive and played afterwards.
+The second method is called \textbf{progressive download}, in which the file is stored in a local 
+hard drive but instead the download starts from the beginning and the media can be played when
+enough data are available. However, these two methods have disadvantages like waste of bandwidth,
+\textit{DRM} issues and also requiring a reliable transmission. The last method is called
+\textbf{streaming}, contrary to the former two, the file is not stored locally, but played from
+the server, the client needs a data buffer to store the data that is being downloaded and
+when the session is closed the data are deleted.
 
-The first commercial video streaming was introduced in 1995 and is growing at an incredible
-rate. 
+Streaming media also comes with some challenges. There are a lot of network variability
+and a big heterogeneity in video capable devices. Therefore, to solve these shortcomings,
+\textit{Adaptive bitrate streaming (ABR)} was created.
+
+The basic idea of \textit{Adaptive bitrate streaming} is to adapt the media content
+for the user by monitoring different parameters like estimated bandwidth, buffer level or
+\textit{CPU load}, see \autoref{fig:abrtime}. There are many propietary adaptive streaming solutions:
+
+\begin{itemize}[topsep=0.5pt]
+  \setlength\itemsep{0.5pt}
+  \item \textbf{\textit{Apple HTTP Live Streaming (HLS)}}: \textit{HTTP Live Streaming HLS}
+  is an implementation of an \textit{ABR} protocol over \textit{HTTP} developed by Apple \cite{hls1}
+  as part of the QuickTime software and the mobile operating system \textit{iOS}. \textit{HLS} 
+  supports live streaming and video on demand. \textit{HLS} is proposed in 2009 as a standard to
+  the \textit{IETF} \cite{hls2}.
+  \item \textbf{\textit{Microsoft Smooth Streaming (MSS)}}: \textit{Smooth Streaming} is part
+  of \textit{Internet Information Services (IIS) Media Services} for delivering media over
+  \textit{HTTP} \cite{mss1}. A prototype version of \textit{Smooth Streaming}
+  was used to deliver live and on-demand streaming content from such events as the Summer Olympic
+  Games in Beijing and the Democratic National Convention in Denver.
+  \item \textbf{\textit{Adobe HTTP Dynamic Streaming (HDS)}}: \textit{HTTP Dynamic Streaming}
+  is the implementation of adaptive streaming by Adobe. \textit{HDS} enables high-quality, network
+  efficient HTTP streaming for media delivery that is tightly integrated with Adobe software \cite{hds1}. The
+  solution is based in using \textit{Open Source Media Framework (OSMF)} and Adobe Flash Player.
+\end{itemize}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/abrtime.png}
+  \caption{Evolution of segment quality with time}
+  \label{fig:abrtime}
+
+\end{figure}
+
+But there was no official standarization for adaptive video delivery over HTTP. For that reason,
+a new international stadard called \textit{MPEG-DASH} was developed and published.
+
+\section{Dynamic Adaptive Streaming over HTTP}
+\label{sec:dash}
+
+The \textit{DASH} standard was created between the \textit{Moving Picture Experts Group} from \textit{ISO/IEC}
+and the \textit{3GPP}. The development for \textit{DASH} started in January 2009 and completed in March 2010.
+\textit{MPEG-DASH} was published in April 2012 but has been revised in 2019 as \textit{MPEG-DASH ISO/IEC 23009-1:2019}
+\cite{ISO23009}. The \textit{3\textsuperscript{rd} Generation Partnership Project}
+
+The objective of \textit{DASH} was to create a unique standard that replaces the propietary solutions
+from Microsoft, Apple and Adobe. Also, it will offer the interoperability and the convergence necessary for
+the growth of big scale video streaming solutions. Microsoft, Apple, Netflix, Qualcomm,
+Ericsson and Samsung also took part of the development of the standard.
+
+One of the biggest advantages of \textit{DASH} is that the video streaming is over \textit{HTTP} version 1.1 protocol
+(\textit{HTTP/1.1}). The use of \textit{HTTP} means that reusing existing internet infrastructure and
+media content distribution tecniques using \textit{CDN (Content Delivery Networks)} can be done.
+Another convenience of using \textit{DASH} is that due to using \textit{HTTP} encapsulation, problems
+with passing through firewalls and the \textit{Network Address Translation (NAT)}
+are not existent.
+
+All the control of the media content delivery is located in the \textit{DASH} client side. The
+standard does not define any web delivery mechanism nor the bitrate adaptation algorithm. What \textit{DASH}
+does define in \cite{ISO23009} are:
+
+\begin{itemize}
+  \item \textit{\textbf{The Media Presentation Description (MPD) File Format}}: The \textit{MPD} file
+  uses the \textit{eXtensible Markup Language (XML)} and
+  contains the specifications of the media content and the \textit{URL} of the segments
+  in the \textit{HTTP} video servers.
+  \item \textbf{Segment format}: \textit{DASH} defines the characteristics of the necessary
+  codifications and the way that the media content is divided in small fragments called 
+  \textit{segments}.
+\end{itemize}
 
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/dasharch.png}
+  \caption{DASH client-server architecture. Fuente: MPEG \cite{ios1}}
+  \label{fig:dasharch}
+\end{figure}
 
+\subsection{MPD File}
+\label{sec:mpd}
+
+\section{Mobile Networks}
+\label{sec:mobile}
 
 
 

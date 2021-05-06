@@ -11,7 +11,7 @@ Moreover, one of the key predictions made by Cisco in 2018 \cite{cisco1}
 stated that by year 2022, video traffic will make up 82\% 
 of all \textit{IP} traffic.
 
-Consequently, numerous challenges arise. Due to the
+Consequently, many challenges arise. Due to the
 growth of the number and diversity of video capable connected 
 devices and every time more available bandwidth and better quality 
 contents, the client and the server need to adapt the video content to
@@ -19,27 +19,32 @@ the network and the devices. The technique of taking account the
 varying network conditions and computing resources of the user 
 device to choose the adequate quality level is denominated as
 \textit{Adaptive BitRate (ABR)}. Adaptation may be performed
-monitoring different paramaters such as estimated bandwidth,
+monitoring different parameters such as estimated bandwidth,
 client's buffer level, CPU load or screen size.
 
 The \textit{Dynamic Adaptive Streaming over HTTP (DASH)} is one of the
-standards that implements Adaptive BitRate video streaming and was developed
-by the \textit{Moving Picture Experts Group (MPEG)}\cite{dash1}. \textit{MPEG-DASH} 
+standards that implements adaptive bitrate video streaming and was developed
+by the \textit{Moving Picture Experts Group (MPEG)} \cite{dash1}. \textit{MPEG-DASH} 
 enables provisioning and delivering media using existing \textit{HTTP}-delivery 
-networks supports dynamic adaptation with seamless switching.
+networks supports dynamic adaptation with seamless switching. By using
+\textit{HTTP}, the player will not have firewall problems, it will have better
+scalability and the quality selection relays on the client and there is no
+need to have session at the server.
 
 
 \begin{figure}[h]
+\label{fig:chart1}
   \centering
-  \label{fig:chart1}
-  \includegraphics[width=0.8\textwidth]{img/chart1.png}
-  \caption{Global application category total traffic share during COVID-19 lockdown. Source: Sandvine\cite{sandvine1}}
+  \includegraphics[width=\textwidth]{img/chart1.png}
+  \caption{Global application category total traffic share during COVID-19 lockdown. Source: Sandvine \cite{sandvine1}}
 \end{figure}
 
 The \textit{MPEG-DASH} standard was published in 2012 and revised in 2019 
-by the \textit{International Organization for Standarization (ISO) / International 
-Electrotechnical Commision (IEC)} as \textit{MPEG-DASH ISO/IEC 23009-1:2019}
-\cite{ISO23009}.
+by the \textit{International Organization for Standardization (ISO) / International 
+Electrotechnical Commission (IEC)} as \textit{MPEG-DASH ISO/IEC 23009-1:2019}
+\cite{ISO23009}. In addition, the \textit{3\textsuperscript{rd} Generation Partnership Project (3GPP)}
+define the use of \textit{DASH} as the standard continuous delivering of multimedia
+content in mobile networks, specifically in 4G such as \textit{LTE} and 5G networks.
 
 \textit{DASH} divides the media file into small chunks or segments.
 \textit{MPEG-DASH} defines the \textit{Media Presentation Description (MPD)}, 
@@ -48,13 +53,13 @@ Locators (URL)} of the segments. Different qualities are defined as representati
 the \textit{MPD} file contains information for each representation such as the
 codec, bandwidth, the resolution of the video or framerate.
 
-However, the DASH Standard\cite{ISO23009} only defines the data formats
+However, the DASH Standard \cite{ISO23009} only defines the data formats
 for the media reproduction and do not provide the adaptation algorithm.
-The \textit{DASH Industry Forum}\cite{dash2} provides a open source \textit{MPEG-DASH} 
-player implented in \textit{JavaScript} with different adapation algorithms.
-Similarly, \textit{hls.js} is a implementation of an \textit{HTTP Live Streaming}\footnote{HTTP
-Live Streaming is an HTTP-based adaptive bitrate streaming protocol developed by Apple Inc.
-\cite{hls1}} client.
+The \textit{DASH Industry Forum} \cite{dash2} provides an open source \textit{MPEG-DASH} 
+player implemented in \textit{JavaScript} with different adaptation algorithms.
+Similarly, \textit{hls.js} is an implementation of a \textit{HTTP Live Streaming}\footnote{HTTP
+Live Streaming is a HTTP-based adaptive bitrate streaming protocol developed by Apple Inc.
+ \cite{hls1}} client.
 
 The adaptation algorithms needs to be tested in different scenarios (real or simulated)
 and tweaked to provide the maximum perceived quality by the users. Also, there are
@@ -65,10 +70,10 @@ the bandwidth and it would cause a pause in the reproduction because all the
 segments in the buffer is emptied. The algorithm can also underestimate the bandwidth,
 the video player requests media segments with inferior quality than the quality at which the 
 bandwidth available of the network can allow. Lastly, the algorithm should avoid
-constant bitrate switches result of bandwidth fructuations, and provide a smooth and
+constant bitrate switches result of bandwidth fluctuations, and provide a smooth and
 seamless video watching experience.
 
-The \textit{ns-3} simulator is a open-source and extensible discrete-event network simulator. 
+The \textit{ns-3} simulator is an open-source and extensible discrete-event network simulator. 
 The extensible nature of this tool allows us to develop a new module for \textit{ns-3}
 mimicking the behaviour of \textit{ABR} clients and servers. With this new module, \textit{ns-3} 
 will be able to simulate extreme network scenarios and test the performance of 
@@ -84,11 +89,11 @@ In order to achieve the proposed objectives, the following steps will be propose
 \begin{enumerate}
   \item Study and understand \textit{ns-3} and basic modules such as the core module, the
   internet module, applications module, \textit{LENA} module among others. Build basic \textit{LTE} scenarios
-  tweak radio paramaters, and output results.
+  tweak radio parameters, and output results.
   \item Design a new module in \text{ns-3} that simulates behaviours of \textit{ABR} clients
   and servers. Study and implement existing adaptation algorithms.
   \item Define and implement objective \textit{QoE} metrics.
-  Build new \textit{LTE} scenarios and compare the perfomances of the implemented adaptation
+  Build new \textit{LTE} scenarios and compare the performances of the implemented adaptation
   algorithms.
 \end{enumerate}
 
