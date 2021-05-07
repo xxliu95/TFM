@@ -96,8 +96,33 @@ does define in \cite{ISO23009} are:
   \label{fig:dasharch}
 \end{figure}
 
-\subsection{MPD File}
+The \autoref{fig:dasharch} presents a simple \textit{DASH} architecture. The video and audio
+content are processed and stored on an \textit{HTTP} server. To access the content, the client
+sends \textit{HTTP} requests to the server. But first, the client needs to download the 
+\textit{MPD} file, normally through \textit{HTTP}. The client then does the
+parsing of the \textit{MPD}, extract information such as the duration of a segment, media types or 
+resolutions. Finally, the \textit{DASH} client chooses the adequate quality and starts the 
+streaming of the content using \textit{HTTP GET} request to fetch the segments.
+
+The \textit{DASH} client stores the segments in a buffer and consumes the content. It continues
+to fetch new segments and by monitoring network variables it will decide which quality (higher
+or lower bitrate) to request next to avoid problems like buffer underflow and maintain at 
+least a set number of segments in the buffer.
+
+\subsection{MPD}
 \label{sec:mpd}
+The \textit{MPD} file is an \textit{XML} document that describes the characteristics
+of the different media components that composes the media content (e.g. video, audio, subtitles).
+
+The structure of the \textit{MPD} is hierarchical. The media is devided in a sequence of
+\textbf{Periods} in time. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{img/mpd.png}
+  \caption{The MPD hierarchical data model. Source: MPEG \cite{ios1}}
+  \label{fig:mpd}
+\end{figure}
 
 \section{Mobile Networks}
 \label{sec:mobile}
