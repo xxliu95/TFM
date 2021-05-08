@@ -144,6 +144,8 @@ in temporal sequence. Each segment has a \textit{URI}, the client will use this 
 \subsection{Adaptation Algorithms}
 \label{sec:adap}
 
+////////
+
 \subsection{QoS \& QoE Metrics}
 \label{sec:qoemetrics}
 
@@ -171,12 +173,51 @@ Some of the metrics are as follows:
 \end{itemize}
 
 
-
-
 \section{Mobile Networks}
 \label{sec:mobile}
 
+The first mobile phone call was made in 1973 \cite{mob1}. New generations of mobile networks 
+are developed almost every decade. The first generation \textit{1G} launched years later, but
+it was only capable of doing voice calls. In 1991, the second generation \textit{2G (GSM)} of 
+mobile networks was introduced. \textit{GSM} provided improved wireless capabilities and 
+introduced by the first time multimedia content with \textit{Multimedia Message Service (MMS)}.
+But it was the third generation \textit{3G}, launched in 2001, that enabled new internet-driven
+services such as video conferencing and streaming. Later in 2009, the \textit{LTE 4G} standard
+was commercially deployed. With theorical download bandwidth of almost 100Mbps made high-quality
+streaming into reality. \textit{5G} technologies improves in bandwidth even more and brings 
+video streaming in \textit{UHD} and more.
 
+The consumption of multimedia content on mobile networks is becoming increasingly relevant with 
+the rise of bandwidth and ease of access. This section will provide a brief introduction to the 
+basic concepts of mobile networks, their architecture and fundamentals.
+
+\subsection{LTE}
+\label{sec:4g}
+
+\textit{Long Term Evolution (LTE)} was first introduced in 2008 in the Release 8 of the \textit{3GPP}
+specification \cite{lte1}. The objective of \textit{LTE} was to migrate the \textit{3GPP} systems
+into a optimized system based on packet switching (all \textit{IP}), with greater bitrates, lower
+latency y multiple radio access technologies support.
+
+\subsubsection{LTE Radio Interface}
+
+\subsubsection{Architecture}
+\label{sec:eps}
+
+The design of the \textit{LTE} architecture was done from the ground up. The goal was to build a flat, all
+\textit{IP} architecture using packet-switching, well structured (separation of control plane and user plane)
+and with few elements.
+
+The \textit{Evolved Packet System (EPS)} is constituted by the following elements:
+
+\begin{itemize}
+  \item \textbf{\textit{User Equipment (UE)}}
+  \item \textbf{\textit{Evolved UMTS Terrestial Radio Access Network (E-UTRAN)}}
+  \item \textbf{\textit{Evolved Packet Core (EPC)}}
+\end{itemize}
+
+\subsection{5G}
+\label{sec:5G}
 
 
 \section{Network Simulator 3}
