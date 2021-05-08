@@ -235,7 +235,7 @@
     keywordstyle=\color{cyan},
     stringstyle=\color{black},
     tagstyle=\color{darkblue},
-    morekeywords={xmlns,version,type}
+    morekeywords={xmlns,version,type, Representation}
 }
 
 \lstdefinestyle{mono}{
@@ -382,9 +382,11 @@
 }
 
 \appendix
+\renewcommand\chaptername{Appendix}
 \begin{appendices}
     \include{6-impact}
     \include{7-budget}
+    % \include{8-exampleMPD}
 \end{appendices}
 
 \end{document}

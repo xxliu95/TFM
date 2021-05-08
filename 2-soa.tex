@@ -60,7 +60,8 @@ a new international stadard called \textit{MPEG-DASH} was developed and publishe
 The \textit{DASH} standard was created between the \textit{Moving Picture Experts Group} from \textit{ISO/IEC}
 and the \textit{3GPP}. The development for \textit{DASH} started in January 2009 and completed in March 2010.
 \textit{MPEG-DASH} was published in April 2012 but has been revised in 2019 as \textit{MPEG-DASH ISO/IEC 23009-1:2019}
-\cite{ISO23009}. The \textit{3\textsuperscript{rd} Generation Partnership Project}
+\cite{ISO23009}. The \textit{3\textsuperscript{rd} Generation Partnership Project} defined the use of
+\textit{DASH} as the standard of digital media delivery in mobile networks (3G GSM, 4G LTE) in \cite{3gpp1}.
 
 The objective of \textit{DASH} was to create a unique standard that replaces the propietary solutions
 from Microsoft, Apple and Adobe. Also, it will offer the interoperability and the convergence necessary for
@@ -114,8 +115,9 @@ least a set number of segments in the buffer.
 The \textit{MPD} file is an \textit{XML} document that describes the characteristics
 of the different media components that composes the media content (e.g. video, audio, subtitles).
 
-The structure of the \textit{MPD} is hierarchical. The media is devided in a sequence of
-\textbf{Periods} in time. 
+The structure of the \textit{MPD} is hierarchical as illustrated in \autoref{fig:mpd}. The media content is divided in a sequence of
+\textbf{periods}, each period has a starting time and a duration. In a period, the set of encoded
+versions of the media content is consistent, that is, the same bitrates, languages and so on.
 
 \begin{figure}[h]
   \centering
@@ -123,6 +125,53 @@ The structure of the \textit{MPD} is hierarchical. The media is devided in a seq
   \caption{The MPD hierarchical data model. Source: MPEG \cite{ios1}}
   \label{fig:mpd}
 \end{figure}
+
+Each period consists of one or multiple \textbf{adaptation sets}. An adaptation set represents
+an set of interchangeable encoded versions of one or serveral media content components. For instance,
+and adaptation set may contain the different bitrates of the video component of the same multimedia content
+and another adaptation set may contain the different bitrates of the audio component of the same multimedia
+content.
+
+An adaptation set contains a set of \textbf{representations}. A representation describe an enconded
+alternative of the same media component, the alternatives can vary by bitrate, resolution, framerates, 
+codec, sampling rate or other characteristics.
+
+Each representation consists of one or multiple \textbf{segments}. A segment is the media stream chunks
+in temporal sequence. Each segment has a \textit{URI}, the client will use this \textit{URI} to make
+\textit{HTTP GET} requests to the video server. 
+
+
+\subsection{Adaptation Algorithms}
+\label{sec:adap}
+
+\subsection{QoS \& QoE Metrics}
+\label{sec:qoemetrics}
+
+
+The \textit{Quality of Service (QoS)} is defined by the \textit{ITU-T} in the document P.10/G.100
+ \cite{itu2} as \textquotedbl The totality of characteristics of a telecommunications service that bear on its 
+ ability to satisfy stated and implied needs of the user of the service\textquotedbl. And the \textit{Quality of 
+Experience (QoE)} is defined as \textquotedbl The degree of delight or annoyance of the user of an application or service\textquotedbl.
+
+The standard \textit{ISO/IEC 23009} defines a list of parameters for \textit{Quality of Service (QoS)} and
+\textit{Quality of Experience (QoE)} for the adaptation algorithms to base on. There parameters 
+is also used to evaluate the overall quality in the multimedia distribution service.
+
+Some of the metrics are as follows:
+
+\begin{itemize}
+  \item \textbf{Average Throughtput}: This is a \textit{QoE} metric that defines a list in which 
+  the average Throughtput observed in the client during a measuring period.
+  \item \textbf{Initial Playout Delay}: This is a \textit{QoE} metric that represents the initial 
+  delay in the reproduction of the media content.
+  \item \textbf{Representation Switch Events}: This is a \textit{QoS} metric for measuring the 
+  number of representation switch events of the multimedia content.
+  \item \textbf{Buffer Level}: This is a \textit{QoS} metric that monitors the level of occupancy
+  of the buffer during the reproduction of the multimedia content.
+\end{itemize}
+
+
+
 
 \section{Mobile Networks}
 \label{sec:mobile}
