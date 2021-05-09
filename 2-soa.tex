@@ -1,21 +1,28 @@
 \chapter{State of the art}
 \label{chap:soa}
 
-In this chapter we ....
-
+This chapter will introduce the main concepts and tools that will be used during the development 
+of the project. The \autoref{sec:abr} will explain the different methods of content distribution 
+over \textit{HTTP} and different implementations of adaptive streaming, introduction to 
+the \textit{DASH} standard, different types of adaptation algorithms and \textit{QoE} and 
+\textit{QoS} metrics. The \autoref{sec:mobile} will describe basic architecture and fundamentals
+of 4G and 5G. Finally, \autoref{sec:ns3} will run through the basics of the \textit{ns-3}
+simulator and some useful modules.
 
 \section{ABR Video Streaming}
 \label{sec:abr}
 
 There are three ways of media delivery over \textit{HTTP}. The first method is by
-\textbf{file download}, the media file is entirely stored in a local hard drive and played afterwards.
-The second method is called \textbf{progressive download}, in which the file is stored in a local 
-hard drive but instead the download starts from the beginning and the media can be played when
-enough data are available. However, these two methods have disadvantages like waste of bandwidth,
+\textbf{file download}, the media file is downloaded in its entirety in a local hard disk and 
+then it can be played. The second method is called \textbf{progressive download}, this method
+is similar to the file download, but instead the download starts from the beginning and the 
+media starts playing once enough data are playable. 
+However, these two methods have disadvantages like waste of bandwidth,
 \textit{DRM} issues and also requiring a reliable transmission. The last method is called
-\textbf{streaming}, contrary to the former two, the file is not stored locally, but played from
-the server, the client needs a data buffer to store the data that is being downloaded and
-when the session is closed the data are deleted.
+\textbf{streaming}, contrary to the former two, the file itseft is not stored locally, 
+smaller chunks of video are sent from the server and the client needs a data buffer to store 
+the data that is being downloaded. The client plays from the buffer, and when the session 
+is closed the data are deleted.
 
 Streaming media also comes with some challenges. There are a lot of network variability
 and a big heterogeneity in video capable devices. Therefore, to solve these shortcomings,
@@ -34,9 +41,9 @@ for the user by monitoring different parameters like estimated bandwidth, buffer
   the \textit{IETF} \cite{hls2}.
   \item \textbf{\textit{Microsoft Smooth Streaming (MSS)}}: \textit{Smooth Streaming} is part
   of \textit{Internet Information Services (IIS) Media Services} for delivering media over
-  \textit{HTTP} \cite{mss1}. A prototype version of \textit{Smooth Streaming}
-  was used to deliver live and on-demand streaming content from such events as the Summer Olympic
-  Games in Beijing and the Democratic National Convention in Denver.
+  \textit{HTTP} \cite{mss1}. Their \textit{MSS} technology was used for several
+  sports events such a the Beijing Summer Olympic Games in 2008 and the 2010 Winter Olymplics
+  in Vancouver \cite{mss2}.
   \item \textbf{\textit{Adobe HTTP Dynamic Streaming (HDS)}}: \textit{HTTP Dynamic Streaming}
   is the implementation of adaptive streaming by Adobe. \textit{HDS} enables high-quality, network
   efficient HTTP streaming for media delivery that is tightly integrated with Adobe software \cite{hds1}. The
@@ -57,16 +64,18 @@ a new international stadard called \textit{MPEG-DASH} was developed and publishe
 \section{Dynamic Adaptive Streaming over HTTP}
 \label{sec:dash}
 
-The \textit{DASH} standard was created between the \textit{Moving Picture Experts Group} from \textit{ISO/IEC}
-and the \textit{3GPP}. The development for \textit{DASH} started in January 2009 and completed in March 2010.
-\textit{MPEG-DASH} was published in April 2012 but has been revised in 2019 as \textit{MPEG-DASH ISO/IEC 23009-1:2019}
-\cite{ISO23009}. The \textit{3\textsuperscript{rd} Generation Partnership Project} defined the use of
-\textit{DASH} as the standard of digital media delivery in mobile networks (3G GSM, 4G LTE) in \cite{3gpp1}.
+\textit{DASH} was developed from January 2009 to March 2010 and published in April 2012. 
+The most recent revision of the standarization was released in 2019 as 
+\textit{MPEG-DASH ISO/IEC 23009-1:2019} \cite{ISO23009}. 
+ \textit{Moving Picture Experts Group} from \textit{ISO/IEC} and the \textit{3GPP} collaborated on
+the \textit{DASH} standard. The \textit{3\textsuperscript{rd} Generation Partnership Project} defined the use of
+\textit{DASH} as the standard of digital media delivery in mobile networks (4G \textit{LTE}, 5G) in \cite{3gpp1}.
 
 The objective of \textit{DASH} was to create a unique standard that replaces the propietary solutions
-from Microsoft, Apple and Adobe. Also, it will offer the interoperability and the convergence necessary for
-the growth of big scale video streaming solutions. Microsoft, Apple, Netflix, Qualcomm,
-Ericsson and Samsung also took part of the development of the standard.
+from Microsoft, Apple and Adobe. Also, it will offer the interoperability and the convergence needed for 
+the expansion of large-scale video streaming solutions. Also, the \textit{DASH Industry Forum (DASH-IF)} was created to promote and help the expansion of
+\textit{DASH}. Microsoft, Apple, Netflix, Qualcomm, Ericsson and Samsung are some of the companies
+members of the \textit{DASH-IF}.
 
 One of the biggest advantages of \textit{DASH} is that the video streaming is over \textit{HTTP} version 1.1 protocol
 (\textit{HTTP/1.1}). The use of \textit{HTTP} means that reusing existing internet infrastructure and
@@ -126,8 +135,8 @@ versions of the media content is consistent, that is, the same bitrates, languag
   \label{fig:mpd}
 \end{figure}
 
-Each period consists of one or multiple \textbf{adaptation sets}. An adaptation set represents
-an set of interchangeable encoded versions of one or serveral media content components. For instance,
+Each period consists of one or multiple \textbf{adaptation sets}. A collection of interchangeable 
+encoded versions of one or more media content components is referred to as an adaptation set. For instance,
 and adaptation set may contain the different bitrates of the video component of the same multimedia content
 and another adaptation set may contain the different bitrates of the audio component of the same multimedia
 content.
@@ -159,7 +168,7 @@ The standard \textit{ISO/IEC 23009} defines a list of parameters for \textit{Qua
 \textit{Quality of Experience (QoE)} for the adaptation algorithms to base on. There parameters 
 is also used to evaluate the overall quality in the multimedia distribution service.
 
-Some of the metrics are as follows:
+Some of the metrics defined in \cite{3gpp1} and \cite{ISO23009} are as follows:
 
 \begin{itemize}
   \item \textbf{Average Throughtput}: This is a \textit{QoE} metric that defines a list in which 
@@ -212,7 +221,7 @@ and with few elements.
   \centering
   \includegraphics[width=0.8\textwidth]{img/eps.png}
   \caption{LTE Architecture}
-  \label{fig:lte}
+  \label{fig:eps}
 \end{figure}
 
 The \textit{Evolved Packet System (EPS)} is constituted by the following elements:
@@ -223,8 +232,29 @@ The \textit{Evolved Packet System (EPS)} is constituted by the following element
   \item \textbf{\textit{Evolved UMTS Terrestial Radio Access Network (E-UTRAN)}}: The only elements
   in the \textit{E-UTRAN} are the \textit{e-NodeB}. An \textit{\textbf{enhanced Node B (e-NodeB)}} works as a base station
   and a controller.
-  \item \textbf{\textit{Evolved Packet Core (EPC)}}: 
+  \item \textbf{\textit{Evolved Packet Core (EPC)}}: The \textit{EPC} is made up of a network of gateways, 
+  control servers, and databases linked by a \textit{IP} backbone. The main elements of the \textit{EPC}
+  are:
+  \begin{itemize}
+    \item[$\circ$] \textit{\textbf{Mobility Management Entity (MME)}}: The \textit{MME} is a server 
+    used for managing the signalling of the operation. 
+    \item[$\circ$] \textit{\textbf{Serving Gateway (SGW)}}: The \textit{SGW} is the gateway used for
+    communicating the access network \textit{E-UTRAN} and the \textit{PGW}.
+    \item[$\circ$] \textit{\textbf{Packet Data Network Gateway (PGW)}}: The \textit{PGW} is the gateway
+    for the traffic between the core network and external packet data networks. 
+    \item[$\circ$] \textit{\textbf{Home Subscriber Server (HSS)}}: The \textit{HSS} is a database 
+    containing information about the \textit{EPC} network users.  
+    \item[$\circ$] \textit{\textbf{Policy Charging and Rule Function (PCRF)}}: The \textit{PCRF} is used
+    for \textit{QoS}, policy and charging management. 
+  \end{itemize}
 \end{itemize}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/epc.png}
+  \caption{Evolved Packet Core (EPC) Architecture}
+  \label{fig:epc}
+\end{figure}
 
 MIMO
 
