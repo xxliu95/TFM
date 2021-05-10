@@ -11,6 +11,7 @@ Moreover, one of the key predictions made by Cisco in 2018 \cite{cisco1}
 stated that by year 2022, video traffic will make up 82\% 
 of all \textit{IP} traffic.
 
+
 Consequently, many challenges arise. Due to the growth in the 
 number and diversity of connected video-capable devices, and the 
 increasing bandwidth and higher quality content available, the 
@@ -22,35 +23,39 @@ device to choose the adequate quality level is denominated as
 monitoring different parameters such as estimated bandwidth,
 client's buffer level, CPU load or screen size.
 
-\begin{figure}[h]
-  \label{fig:chart1}
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/chart2.png}
-    \caption{Global application category total traffic share during COVID-19 lockdown. Source: Sandvine \cite{sandvine1}}
-  \end{figure}
 
 The \textit{Dynamic Adaptive Streaming over HTTP (DASH)} is one of the
 standards that implements adaptive bitrate video streaming and was developed
 by the \textit{Moving Picture Experts Group (MPEG)} \cite{dash1}. \textit{MPEG-DASH} 
 enables provisioning and delivering media using existing \textit{HTTP}-delivery 
 networks supports dynamic adaptation with seamless switching. By using
-\textit{HTTP}, the player will not have firewall problems, it will have better
-scalability and the quality selection relays on the client and there is no
-need to have session at the server.
+\textit{HTTP}, the player will not have firewall problems. The quality selection 
+relays on the client thus providing better scalability, and there is no need to have 
+session at the server.
 
+  
+\begin{figure}[h]
+  \label{fig:chart1}
+    \centering
+    \includegraphics[width=0.85\textwidth]{img/chart2.png}
+    \caption{Global application category total traffic share during COVID-19 lockdown. Source: Sandvine \cite{sandvine1}}
+  \end{figure}
+  
+  
 The \textit{MPEG-DASH} standard was published in 2012 and revised in 2019 
 by the \textit{International Organization for Standardization (ISO) / International 
 Electrotechnical Commission (IEC)} as \textit{MPEG-DASH ISO/IEC 23009-1:2019}
 \cite{ISO23009}. In addition, the \textit{3\textsuperscript{rd} Generation Partnership Project (3GPP)}
-define the use of \textit{DASH} as the standard continuous delivering of multimedia
+defines the use of \textit{DASH} as the standard continuous delivering of multimedia
 content in mobile networks, specifically in 4G such as \textit{LTE} and 5G networks.
 
 \textit{DASH} divides the media file into small chunks or segments.
-\textit{MPEG-DASH} defines the \textit{Media Presentation Description (MPD)}, 
-which is an XML-structured manifest file that contains the \textit{Universal Resource 
+and defines the \textit{Media Presentation Description (MPD)}, 
+which is an XML manifest file that contains the \textit{Universal Resource 
 Locators (URL)} of the segments. Different qualities are defined as representations,
-the \textit{MPD} file contains information for each representation such as the
-codec, bandwidth, the resolution of the video or framerate.
+the \textit{MPD} contains information for each representation such as the
+codec, bandwidth, resolution or framerate.
+
 
 However, the DASH Standard \cite{ISO23009} only defines the data formats
 for the media reproduction and do not provide the adaptation algorithm.
@@ -60,13 +65,15 @@ Similarly, \textit{hls.js} is an implementation of a \textit{HTTP Live Streaming
 Live Streaming is a HTTP-based adaptive bitrate streaming protocol developed by Apple Inc.
  \cite{hls1}} client.
 
+
+
 The adaptation algorithms needs to be tested in different scenarios (they can be simulated)
-and tweaked to provide the maximum perceived quality by the users. Also, there are
+and be tweaked to provide the maximum perceived quality by the users. Also, there are
 algorithms that perform better in some specific scenarios and worse in others. The adaptation
-algorithm is the responsible of avoid problems that have a negative impact
-on the \textit{Quality of Experience (QoE)}. Firstly, the algorithm can overestimate
+algorithm is the responsible for avoiding problems that may have a negative impact
+on the \textit{Quality of Experience (QoE)}. One problem is that, the algorithm can overestimate
 the bandwidth and it would cause a pause in the reproduction because all the 
-segments in the buffer is emptied. The algorithm can also underestimate the bandwidth,
+segments in the buffer are emptied. The algorithm can also underestimate the bandwidth,
 the video player requests media segments with inferior quality than the quality at which the 
 bandwidth available of the network can allow. Lastly, the algorithm should avoid
 constant bitrate switches result of bandwidth fluctuations, and provide a smooth and
@@ -75,8 +82,9 @@ seamless video watching experience.
 The \textit{ns-3} simulator is an open-source and extensible discrete-event network simulator. 
 The extensible nature of this tool allows us to develop a new module for \textit{ns-3}
 mimicking the behaviour of \textit{ABR} clients and servers. With this new module, \textit{ns-3} 
-will be able to simulate extreme network scenarios and test the performance of 
-various adaptation algorithms.
+will be able to simulate diverse mobile network scenarios and test the performance of adaptation algorithms.
+
+
 
 \section{Objectives}
 \label{sec:objectives}
@@ -91,7 +99,7 @@ In order to achieve the proposed objectives, the following steps will be propose
   tweak radio parameters, and output results.
   \item Design a new module in \text{ns-3} that simulates behaviours of \textit{ABR} clients
   and servers. Study and implement existing adaptation algorithms.
-  \item Define and implement objective \textit{QoE} metrics.
+  \item Implement objective \textit{QoE} and \textit{QoS} metrics.
   Build new \textit{LTE} scenarios and compare the performances of the implemented adaptation
   algorithms.
 \end{enumerate}

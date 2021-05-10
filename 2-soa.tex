@@ -17,15 +17,15 @@ There are three ways of media delivery over \textit{HTTP}. The first method is b
 then it can be played. The second method is called \textbf{progressive download}, this method
 is similar to the file download, but instead the download starts from the beginning and the 
 media starts playing once enough data are playable. 
-However, these two methods have disadvantages like waste of bandwidth,
+However, these two methods have disadvantages like waste of bandwidth or
 \textit{DRM} issues and also requiring a reliable transmission. The last method is called
 \textbf{streaming}, contrary to the former two, the file itseft is not stored locally, 
 smaller chunks of video are sent from the server and the client needs a data buffer to store 
-the data that is being downloaded. The client plays from the buffer, and when the session 
-is closed the data are deleted.
+the data that is being downloaded. The client plays the multimedia content from the 
+buffer, and when the session is closed the data are deleted.
 
 Streaming media also comes with some challenges. There are a lot of network variability
-and a big heterogeneity in video capable devices. Therefore, to solve these shortcomings,
+and a big heterogeneity in video capable devices. Therefore, to overcome these shortcomings,
 \textit{Adaptive bitrate streaming (ABR)} was created.
 
 The basic idea of \textit{Adaptive bitrate streaming} is to adapt the media content
