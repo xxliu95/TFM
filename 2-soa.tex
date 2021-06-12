@@ -3,11 +3,10 @@
 
 This chapter will introduce the main concepts and tools that will be used during the development 
 of the project. The \autoref{sec:abr} will explain the different methods of content distribution 
-over \textit{HTTP} and different implementations of adaptive streaming, introduction to 
+over \textit{HTTP} and different types and implementations of adaptive streaming, introduction to 
 the \textit{DASH} standard, different types of adaptation algorithms and \textit{QoE} and 
 \textit{QoS} metrics. The \autoref{sec:mobile} will describe basic architecture and fundamentals
-of 4G and 5G. Finally, \autoref{sec:ns3} will run through the basics of the \textit{ns-3}
-simulator and some useful modules.
+of 4G LTE, such as the radio interface, propagation loss model, fading model, antenna model, etc.
 
 \section{ABR Video Streaming}
 \label{sec:abr}
@@ -153,7 +152,87 @@ in temporal sequence. Each segment has a \textit{URI}, the client will use this 
 \subsection{Adaptation Algorithms}
 \label{sec:adap}
 
-////////
+In a video streaming service, there are a number of factors like the download bandwidth, delay or packet losses
+that can produced undesirable effects on the client such as buffer underflow, rebuffering and interruptions
+that lead to bad playback experience, thus, a bad Quality of Experience. To solve these problems, the ABR video
+streaming clients uses different adaptation algorithms to give a higher QoE.
+
+An adaptation algorithm is a technique used in a multimedia streaming service to adjust the video quality
+in real-time according to different parameters. Some of the parameters are:
+
+\begin{itemize}
+  \item \textbf{Client device}: The screen resolution, CPU capabilities, Buffer size, etc.
+  \item \textbf{Network}: Type of access network (Mobile, Fixed), available bandwidth, etc.
+\end{itemize}
+
+The following subsections will explain different types of adaptation algorithms and the algorithms implemented
+for this thesis in \textit{ns-3}.
+
+\subsubsection{Bandwidth throughput based algorithms}
+
+This group of algorithms uses estimations of bandwidth throughput as the main rule to select
+the qualities of the multimedia content for the client. The main difference between algorithms of
+this kind is the bandwidth estimation method and how the estimation relates to the qualities. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{img/dashjs.png}
+  \caption{Bandwidth based algorithms. Source: \cite{abr1}}
+  \label{fig:throughput}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{HLS.js} \cite{hls3}. The algorithm is called Bandwidth estimation. 
+  
+  The algorithm processes two EWMA (Exponentially Weighted Moving Averages) and chooses the minimum of the two 
+  as the bandwidth estimation.
+  Then the bandwidth estimation is multiplied by a factor to reduce oscilation. And finally it selects the 
+  first quality with a bitrate less than the adjusted bandwidth estimation. 
+
+
+  \item \textbf{DASH.js} \cite{dash3}. The Throughput Rule.
+  
+  This is a very simple algorithm. This is basically the same algorithm as the Bandwidth estimation from HLS.js.
+  It computes the average throughput, and uses an safety factor to avoid oscilations. And then chooses the quality
+  based on the safe average and creates a new \textit{SwitchRequest}.
+
+  
+\end{itemize}
+
+\subsubsection{Buffer based algorithms}
+
+This group of algorithms uses buffer occupancy information to try to choose the highest level of bitrate
+for the multimedia content. These algorithms are usually used to avoid buffer underflow.
+
+\begin{itemize}
+  \item \textbf{BOLA} \cite{bola1}. Buffer Occupancy based Lyapunov Algorithm.
+  
+  The BOLA adaptation algorithm uses the Lyapunov optimization to make decisions. This is an utility 
+  theory and it is configurable with a tradeoff parameter to choose between rebuffering potential and bitrate
+  maximization.
+  
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/BOLA.png}
+    \caption{BOLA's bitrate choice as function of buffer level. Source: \cite{bola1}}
+    \label{fig:bola}
+  \end{figure}
+
+  BOLA tries to maximize ${V_{n}+\gamma S_{n}}$.
+  where: 
+  \begin{itemize}
+    \item[$\circ$] \textbf{${V_{n}}$} is the bitrate utility.
+    \item[$\circ$] \textbf{${S_{n}}$} is the playback smoothness.
+    \item[$\circ$] \textbf{${\gamma}$} is the tradeoff weight parameter.
+  \end{itemize}
+\end{itemize}
+
+
+\subsubsection{Control theory based or hybrid algorithms}
+
+This class of algorithms uses a combination of throughput estimation and buffer occupancy and tries to 
+maximize the bitrate selection with decision-taking indicators calculated making use of control theory or
+stochastic optimal control equations.
 
 \subsection{QoS \& QoE Metrics}
 \label{sec:qoemetrics}
@@ -171,8 +250,8 @@ is also used to evaluate the overall quality in the multimedia distribution serv
 Some of the metrics defined in \cite{3gpp1} and \cite{ISO23009} are as follows:
 
 \begin{itemize}
-  \item \textbf{Average Throughtput}: This is a \textit{QoE} metric that defines a list in which 
-  the average Throughtput observed in the client during a measuring period.
+  \item \textbf{Average Throughput}: This is a \textit{QoE} metric that defines a list in which 
+  the average Throughput observed in the client during a measuring period.
   \item \textbf{Initial Playout Delay}: This is a \textit{QoE} metric that represents the initial 
   delay in the reproduction of the media content.
   \item \textbf{Representation Switch Events}: This is a \textit{QoS} metric for measuring the 
@@ -207,8 +286,6 @@ basic concepts of mobile networks, their architecture and fundamentals.
 specification \cite{lte1}. The objective of \textit{LTE} was to migrate the \textit{3GPP} systems
 into a optimized system based on packet switching (all \textit{IP}), with greater bitrates, lower
 latency y multiple radio access technologies support.
-
-\subsubsection{LTE Radio Interface}
 
 \subsubsection{Architecture}
 \label{sec:eps}
@@ -256,22 +333,60 @@ The \textit{Evolved Packet System (EPS)} is constituted by the following element
   \label{fig:epc}
 \end{figure}
 
-MIMO
+\subsubsection{OFDMA and SC-FDMA}
+The cellular communication systems needs to have a strategy for multiple access. In LTE, the 
+\textit{Orthogonal Frequency Division Multiple Access (OFDMA)} is used for downlink and the \textit{Single-
+Carrier Frequency Division Multiple Access (SC-FDMA)} is used for uplink. Both are very similar, consisting
+in allocating each subscriber some portion of the subcarriers for certain amount of time.
 
-LTE enb phy
+In the Figure \ref{fig:lterb}, a transmission structure of LTE is presented. The two dimentions of the 
+plane are time and frequency. Two important concepts are defined as:
 
-UM buffer size
+\begin{itemize}
+  \item \textbf{\textit{Resource Element (RE)}}: A Resource Element is the basic element of resouce, it is
+  defined as one subcarrier in a symbol period.
+  \item \textbf{\textit{Resource Block (RB)}}: A Resource Block is composed by twelve subcarriers (180 kHz) in 
+  a time interval of 0.5 ms (7 OFDM symbols).
+\end{itemize}
+
+\begin{table}[]
+  \centering
+  \begin{tabular}{@{}lcccccc@{}}
+  \toprule
+  \textbf{Bandwidth}               & 1.4 MHz & 3 MHz & 5 MHz & 10 MHz & 15 MHz & 20 MHz \\ \midrule
+  \textbf{Number of RBs available} & 6       & 15    & 25    & 50     & 75     & 100    \\ \bottomrule
+  \end{tabular}
+  \caption{Number of Resource Blocks against each channel bandwidth. Source: \cite{ofdma1}}
+  \label{table:rb}
+\end{table}
+
+Users are assigned resources in resource blocks across a subframe, i.e., 12 subcarriers over ${2\times7 = 14}$
+OFDM symbols for a total of 168 Resource Elements. Because some of the 168 resource components are utilized 
+for various layer 1 and layer 2 control messages, not all of them can be used for data.
+
+The number of Resource Blocks available for each channel bandwidth is given by the Table \ref{table:rb}. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{img/lte_rb.png}
+  \caption{LTE Time-Frequency Grid. Source:\cite{cmov1} }
+  \label{fig:lterb}
+\end{figure}
+
+\subsection{Wireless Fundamentals}
+
+antenna model
 
 propagation loss model
 
 Fading loss model
 
+MIMO
+
+LTE enb phy
+
+UM buffer size
 Earfcn
-
-Resource blocks
-
-
-antenna model
 
 \subsection{5G}
 \label{sec:5G}
