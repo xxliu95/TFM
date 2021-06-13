@@ -1,7 +1,46 @@
 \chapter{Network Simulator 3}
 \label{sec:ns3}
 
+The \textit{ns-3} simulator is an open, extensible discrete-event network simulator designed primarily 
+for educational and network research purposes \cite{ns3}.
 
+In summary, \textit{ns-3} provides models of how packet data networks work and operate, as well as a 
+simulation engine that allows users to run simulation experiments. To do research that are 
+more difficult or impossible to do with real systems, to examine system behavior in a highly 
+controlled, reproducible setting, and to understand about how networks work.
+
+\textit{ns-3} is a collection of modules that can be used together as well as with other software 
+libraries. This tool works mainly at the command line on \textit{Linux} or \textit{MacOS} and with 
+\textit{C++} and \textit{Python} programming languages and development tools.
+
+\section{Getting Started}
+\label{sec:ns3intro}
+
+The prerequisites for the \textit{ns-3} release version 3.32 are the following tools:
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{@{}ll@{}}
+  \toprule
+  Prerequisite & Package/version                             \\ \midrule 
+  C++ compiler & \texttt{clang++} or \texttt{g++} (\texttt{g++} version 4.9 or greater) \\ 
+  Python       & \texttt{python3}  version \textgreater{}= 3.5         \\ 
+  Git          & any recent version                          \\ 
+  tar          & any recent version                          \\ 
+  bunzip2      & any recent version                          \\ \bottomrule
+  \end{tabular}
+  \caption{Prerequisites for ns-3}
+\end{table}
+
+Start by downloading the source archive from \href{https://www.nsnam.org/release/ns-allinone-3.32.tar.bz2}{nsnam}
+or \href{https://gitlab.com/nsnam/ns-3-allinone.git}{gitlab}. Then build \textit{ns-3} with \texttt{build.py}:
+
+% \begin{minted}{bash}
+%   helm install stable/prometheus-operator \
+%       --name prometheus-operator \
+%       --namespace monitoring \
+%       -f values.yaml
+% \end{minted}
 
 REM
 
@@ -19,5 +58,6 @@ Fading loss model
 
 Earfcn
 
+Antenna model
 
 Building
