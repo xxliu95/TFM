@@ -35,12 +35,17 @@ The prerequisites for the \textit{ns-3} release version 3.32 are the following t
 Start by downloading the source archive from \href{https://www.nsnam.org/release/ns-allinone-3.32.tar.bz2}{nsnam}
 or \href{https://gitlab.com/nsnam/ns-3-allinone.git}{gitlab}. Then build \textit{ns-3} with \texttt{build.py}:
 
-% \begin{minted}{bash}
-%   helm install stable/prometheus-operator \
-%       --name prometheus-operator \
-%       --namespace monitoring \
-%       -f values.yaml
-% \end{minted}
+\begin{lstlisting}[language=myshell,caption={Download and installation of ns-3}, captionpos=b]
+  # Download from nsnam
+  $ cd
+  $ mkdir workspace
+  $ cd workspace
+  $ wget https://www.nsnam.org/release/ns-allinone-3.32.tar.bz2
+  $ |\color{myblue}tar| xjf ns-allinone-3.32.tar.bz2
+  $ cd ns-allinone-3.32
+  # Building ns-3
+  $ ./build.py --enable-examples --enable-tests
+\end{lstlisting}
 
 REM
 
