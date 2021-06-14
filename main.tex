@@ -2,7 +2,7 @@
 \documentclass[a4paper,11pt,svgnames]{book}
 % \usepackage[outputdir=%DIR%/build]{minted}
 \usepackage{cite}
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{mathtools}
 \usepackage{thesis}
 \usepackage{calc}
@@ -49,7 +49,9 @@
 \usepackage{courier}
 \usepackage{enumitem}
 % \usepackage{indentfirst}
-\usepackage[scaled=0.9]{DejaVuSansMono}
+% \usepackage[scaled=0.9]{DejaVuSansMono}
+\usepackage[scaled=0.9]{sourcecodepro}
+\usepackage{tipa}
 
 \definecolor{mygreen}{RGB}{12, 155, 91}
 \definecolor{myblue}{RGB}{0, 130, 240}
@@ -85,13 +87,14 @@
     commentstyle=\color{mygreen},
     keywordstyle=\color{myblue},
     escapechar={|},
-    belowskip=2em,
-    aboveskip=2em
+    belowskip=0em,
+    aboveskip=1em,
+    texcl=true,
+    literate ={|}{$\mid$}1
  }
 
-
  \lstdefinelanguage{myshell}{
-    morekeywords={cd, wget, mkdir},
+    morekeywords={export, cd, wget, mkdir},
     morecomment=[l]{\#}
 }
  

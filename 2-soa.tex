@@ -3,9 +3,10 @@
 
 This chapter will introduce the main concepts and tools that will be used during the development 
 of the project. The \autoref{sec:abr} will explain the different methods of content distribution 
-over \textit{HTTP} and different types and implementations of adaptive streaming, introduction to 
+over \textit{HTTP} and different types and implementations of adaptive streaming.
+The \autoref{sec:dash} will make a introduction to 
 the \textit{DASH} standard, different types of adaptation algorithms and \textit{QoE} and 
-\textit{QoS} metrics. The \autoref{sec:mobile} will describe basic architecture and fundamentals
+\textit{QoS} metrics. The \autoref{sec:4g} will describe basic architecture and fundamentals
 of 4G LTE, such as the radio interface, propagation loss model, fading model, antenna model, etc.
 
 \section{ABR Video Streaming}
@@ -261,8 +262,16 @@ Some of the metrics defined in \cite{3gpp1} and \cite{ISO23009} are as follows:
 \end{itemize}
 
 
-\section{Mobile Networks}
-\label{sec:mobile}
+\section{LTE}
+\label{sec:4g}
+
+\textit{Long Term Evolution (LTE)} was first introduced in 2008 in the Release 8 of the \textit{3GPP}
+specification \cite{lte1}. The objective of \textit{LTE} was to migrate the \textit{3GPP} systems
+into a optimized system based on packet switching (all \textit{IP}), with greater bitrates, lower
+latency y multiple radio access technologies support.
+
+\subsection{History}
+\label{sec:4gintro}
 
 The first mobile phone call was made in 1973 \cite{mob1}. New generations of mobile networks 
 are developed almost every decade. The first generation 1G launched years later, but
@@ -279,15 +288,7 @@ The consumption of multimedia content on mobile networks is becoming increasingl
 the rise of bandwidth and ease of access. This section will provide a brief introduction to the 
 basic concepts of mobile networks, their architecture and fundamentals.
 
-\subsection{LTE}
-\label{sec:4g}
-
-\textit{Long Term Evolution (LTE)} was first introduced in 2008 in the Release 8 of the \textit{3GPP}
-specification \cite{lte1}. The objective of \textit{LTE} was to migrate the \textit{3GPP} systems
-into a optimized system based on packet switching (all \textit{IP}), with greater bitrates, lower
-latency y multiple radio access technologies support.
-
-\subsubsection{Architecture}
+\subsection{Architecture}
 \label{sec:eps}
 
 The design of the \textit{LTE} architecture was done from the ground up. The goal was to build a flat, all
@@ -333,7 +334,7 @@ The \textit{Evolved Packet System (EPS)} is constituted by the following element
   \label{fig:epc}
 \end{figure}
 
-\subsubsection{OFDMA and SC-FDMA}
+\subsection{OFDMA and SC-FDMA}
 The cellular communication systems needs to have a strategy for multiple access. In LTE, the 
 \textit{Orthogonal Frequency Division Multiple Access (OFDMA)} is used for downlink and the \textit{Single-
 Carrier Frequency Division Multiple Access (SC-FDMA)} is used for uplink. Both are very similar, consisting
@@ -342,6 +343,13 @@ in allocating each subscriber some portion of the subcarriers for certain amount
 In the Figure \ref{fig:lterb}, a transmission structure of LTE is presented. The two dimentions of the 
 plane are time and frequency. Two important concepts are defined as:
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\textwidth]{img/lte_rb.png}
+  \caption{LTE Time-Frequency Grid. Source:\cite{cmov1} }
+  \label{fig:lterb}
+\end{figure}
+
 \begin{itemize}
   \item \textbf{\textit{Resource Element (RE)}}: A Resource Element is the basic element of resouce, it is
   defined as one subcarrier in a symbol period.
@@ -349,7 +357,14 @@ plane are time and frequency. Two important concepts are defined as:
   a time interval of 0.5 ms (7 OFDM symbols).
 \end{itemize}
 
-\begin{table}[]
+
+Users are assigned resources in resource blocks across a subframe, i.e., 12 subcarriers over ${2\times7 = 14}$
+OFDM symbols for a total of 168 Resource Elements. Because some of the 168 resource components are utilized 
+for various layer 1 and layer 2 control messages, not all of them can be used for data.
+
+The number of Resource Blocks available for each channel bandwidth is given by the Table \ref{table:rb}. 
+
+\begin{table}[h]
   \centering
   \begin{tabular}{@{}lcccccc@{}}
   \toprule
@@ -360,20 +375,8 @@ plane are time and frequency. Two important concepts are defined as:
   \label{table:rb}
 \end{table}
 
-Users are assigned resources in resource blocks across a subframe, i.e., 12 subcarriers over ${2\times7 = 14}$
-OFDM symbols for a total of 168 Resource Elements. Because some of the 168 resource components are utilized 
-for various layer 1 and layer 2 control messages, not all of them can be used for data.
 
-The number of Resource Blocks available for each channel bandwidth is given by the Table \ref{table:rb}. 
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{img/lte_rb.png}
-  \caption{LTE Time-Frequency Grid. Source:\cite{cmov1} }
-  \label{fig:lterb}
-\end{figure}
-
-\subsubsection{Wireless Fundamentals}
+\subsection{Wireless Fundamentals}
 
 Large-scale wireless networks, such as LTE, are fundamentally inefficient and prone to 
 interference. Supporting mobility while also obtaining high levels of power efficiency, 
@@ -384,49 +387,47 @@ capacity, and dependability at low cost and used power is extremely difficult, i
 
 The following list highlights the main parameters affecting the received signal in a wireless system. 
 
-\begin{itemize}
-  \item \textbf{Propagation loss} 
-  
-  The amount of transmitted power that actually reaches the receiver is the first visible 
-  difference between wired and wireless channels. The transmitted signal energy extends along 
-  a spherical wavefront if an isotropic antenna is utilized, hence the energy received at an 
-  antenna ${d}$ distant is inversely proportional to the sphere surface area, ${4\pi d^2}$.
-  However, in reality the propagation environment is not free space, we may also take into
-  account other factors such as reflections.
-  
-  \item \textbf{Shadowing} 
 
-  Obstacles such as trees and buildings, as shown in Figure \ref{fig:pathloss}, may be situated between the 
-  transmitter and receiver, causing temporary signal degradation, whereas a temporary line-of-sight 
-  transmission path would result in abnormally high received power.
+\subsubsection{Propagation loss} 
 
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.76\textwidth]{img/pathloss.png}
-    \caption{Shadowing effect. Source:\cite{lte2} }
-    \label{fig:pathloss}
-  \end{figure}
+The amount of transmitted power that actually reaches the receiver is the first visible 
+difference between wired and wireless channels. The transmitted signal energy extends along 
+a spherical wavefront if an isotropic antenna is utilized, hence the energy received at an 
+antenna ${d}$ distant is inversely proportional to the sphere surface area, ${4\pi d^2}$.
+However, in reality the propagation environment is not free space, we may also take into
+account other factors such as reflections.
 
-  \item \textbf{Fading loss} 
-  
-  The fading effect is another aspect of wireless channels. Fading is generated by the receiving 
-  of multiple versions of the same signal (multipath), unlike path loss or shadowing, which are large-scale 
-  attenuation effects induced by distance or obstacles.
+\subsubsection{Shadowing} 
 
-  The reflections may arrive at very short intervals. For example, if there is local dispersion 
-  around the receiver, or they may arrive at relatively longer intervals, for instance, if the 
-  transmitter and receiver are on multiple pathways. Figure \ref{fig:fading} illustrates this.
+Obstacles such as trees and buildings, as shown in Figure \ref{fig:pathloss}, may be situated between the 
+transmitter and receiver, causing temporary signal degradation, whereas a temporary line-of-sight 
+transmission path would result in abnormally high received power.
 
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.76\textwidth]{img/fading.png}
-    \caption{Fading loss effect. Source:\cite{lte2} }
-    \label{fig:fading}
-  \end{figure}
+\begin{figure}[]
+  \centering
+  \includegraphics[width=0.77\textwidth]{img/pathloss.png}
+  \caption{Shadowing effect. Source:\cite{lte2} }
+  \label{fig:pathloss}
+\end{figure}
 
-\end{itemize}
+\subsubsection{Fading loss} 
 
-\subsubsection{Antennas \& MIMO}
+The fading effect is another aspect of wireless channels. Fading is generated by the receiving 
+of multiple versions of the same signal (multipath), unlike path loss or shadowing, which are large-scale 
+attenuation effects induced by distance or obstacles.
+
+The reflections may arrive at very short intervals. For example, if there is local dispersion 
+around the receiver, or they may arrive at relatively longer intervals, for instance, if the 
+transmitter and receiver are on multiple pathways. Figure \ref{fig:fading} illustrates this.
+
+\begin{figure}[]
+  \centering
+  \includegraphics[width=0.77\textwidth]{img/fading.png}
+  \caption{Fading loss effect. Source:\cite{lte2} }
+  \label{fig:fading}
+\end{figure}
+
+\subsection{Antennas \& MIMO}
 
 An antenna is a device that uses electromagnetic waves to transmit or receive information.
 The transmitting antenna turns electrical currents into electromagnetic waves, 
@@ -448,7 +449,7 @@ Another special type of MIMO is called \textit{Multi User-Multiple Input Multipl
 Single-user SU-higher MIMO's per-user throughput is better suited to more sophisticated user devices with more antennas, 
 whereas MU-MIMO is more practical for low-complexity mobile phones with a small number of reception antennas.
 
-\subsubsection{Physical Layer}
+\subsection{Physical Layer}
 
 LTE enb phy
 
