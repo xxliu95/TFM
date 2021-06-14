@@ -17,6 +17,7 @@
 \usepackage[acronym]{glossaries}
 \usepackage{booktabs}
 \usepackage[usenames,dvipsnames,table]{xcolor}
+\usepackage{scrhack}
 
 % \makeglossaries
 \renewcommand{\UrlFont}{\ttfamily\footnotesize}
@@ -54,7 +55,9 @@
 \usepackage{tipa}
 
 \definecolor{mygreen}{RGB}{12, 155, 91}
+\definecolor{myred}{RGB}{204, 40, 40}
 \definecolor{myblue}{RGB}{0, 130, 240}
+\definecolor{mypurple}{RGB}{140, 96, 168}
 
 \lstset{
     basicstyle=\small\ttfamily,
@@ -67,8 +70,8 @@
     breaklines=true,            
     % keywordstyle=\color{red},
     frame=tb,         
-    keywordstyle=[1]\textbf,   
-    keywordstyle=[2]\textbf,    
+    keywordstyle=[1]\color{myblue},   
+    keywordstyle=[2]\color{mypurple},    
     keywordstyle=[3]\textbf,    
     keywordstyle=[4]\textbf,   
     % stringstyle=\color{white}\ttfamily, 
@@ -85,31 +88,39 @@
     aboveskip=5pt,
     belowskip=10pt,
     commentstyle=\color{mygreen},
-    keywordstyle=\color{myblue},
+    % keywordstyle=\color{myblue},
     escapechar={|},
-    belowskip=0em,
+    belowskip=-1em,
     aboveskip=1em,
     texcl=true,
     literate ={|}{$\mid$}1
  }
 
+ \lstloadlanguages{% Check Dokumentation for further languages ...
+ % [Visual]Basic
+ % Pascal
+ % C
+ C++,
+ XML,
+ % HP
+ Java,
+ bash
+}
+
+% \renewcommand\lstlistingname{Code Snippet}
+% \renewcommand\lstlistlistingname{Code Snippet}
+
  \lstdefinelanguage{myshell}{
     morekeywords={export, cd, wget, mkdir},
     morecomment=[l]{\#}
 }
- 
 
- \lstloadlanguages{% Check Dokumentation for further languages ...
-    % [Visual]Basic
-    % Pascal
-    % C
-    C++,
-    XML,
-    % HP
-    Java,
-    bash
- }
- 
+\lstdefinelanguage{myC++}{
+    morekeywords=[1]{AsciiTraceHelper},
+    morekeywords=[2]{EnableAsciiAll, CreateFileStream, EnablePcapAll},
+    morecomment=[l]{\/\/}
+}
+
 % \usepackage{xcolor}
 
 \colorlet{punct}{red!60!black}

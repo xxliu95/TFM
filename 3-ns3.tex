@@ -124,6 +124,36 @@ The main goal of the simulations is to extract and generate output, and \textit{
 mechanisms for this. Also, since \textit{ns-3} is a C++ software, using \texttt{std::cout} for
 output is also available.
 
+\subsection{ASCII Tracing}
+ns-3 includes helper function that encapsulates the low-level tracing system and guides you 
+through the technicalities of establishing some simple packet traces. If you enable this feature, 
+the output will be in ASCII files, hence the name.
+
+To enable ASCII Tracing, right before the call to \texttt{Simulator::Run ()}, add the following lines
+of code:
+
+\begin{lstlisting}[escapechar=@, language=myC++,caption={ASCII Tracing}, captionpos=b]
+  AsciiTraceHelper ascii;
+  pointToPoint.EnableAsciiAll (ascii.CreateFileStream ("out.tr"));
+\end{lstlisting}
+
+This will generate the output from \texttt{pointToPoint} to a file named \texttt{out.tr}.
+
+\subsection{PCAP Tracing}
+The ns-3 device helpers can also create \texttt{.pcap} trace files. The \textit{pcap} file
+contains the packets captured during the simulation. \textit{Wireshark} or \textit{tcpdump} 
+are programs capable of reading and visualizing \textit{pcap} files.
+
+To enable \textit{pcap} tracing simply add:
+\begin{lstlisting}[escapechar=@, language=myC++,caption={PCAP Tracing}, captionpos=b]
+  pointToPoint.EnablePcapAll ("myfirst");
+\end{lstlisting}
+
+This will create various \texttt{.pcap} files in the format \texttt{"myfirst-0-0.pcap"}, meaning
+the trace file for node 0 and device 0.
+
+\section{ns-3 Modules}
+
 REM
 
 MIMO
