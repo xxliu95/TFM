@@ -1,5 +1,5 @@
 \chapter{Network Simulator 3}
-\label{sec:ns3}
+\label{chap:ns3}
 
 The \textit{ns-3} simulator is an open, extensible discrete-event network simulator designed primarily 
 for educational and network research purposes \cite{ns3}.
@@ -23,11 +23,11 @@ The prerequisites for the \textit{ns-3} release version 3.32 are the following t
   \begin{tabular}{@{}ll@{}}
   \toprule
   Prerequisite & Package/version                             \\ \midrule 
-  C++ compiler & \texttt{clang++} or \texttt{g++} (\texttt{g++} version 4.9 or greater) \\ 
-  Python       & \texttt{python3}  version \textgreater{}= 3.5         \\ 
-  Git          & any recent version                          \\ 
-  tar          & any recent version                          \\ 
-  bunzip2      & any recent version                          \\ \bottomrule
+  C++ compiler & \texttt{clang++} or \texttt{g++} (\texttt{g++} version 4.9 or greater) \\[-0.8em]
+  Python       & \texttt{python3}  version \textgreater{}= 3.5         \\ [-0.8em]
+  Git          & any recent version                          \\ [-0.8em]
+  tar          & any recent version                          \\ [-0.8em]
+  bunzip2      & any recent version                          \\ \bottomrule \\[-0.8em]
   \end{tabular}
   \caption{Prerequisites for ns-3}
 \end{table}
@@ -152,11 +152,169 @@ To enable \textit{pcap} tracing simply add:
 This will create various \texttt{.pcap} files in the format \texttt{"myfirst-0-0.pcap"}, meaning
 the trace file for node 0 and device 0.
 
-\section{ns-3 Modules}
+\section{ns-3 Modules \& Models}
+In this section, modules used in this thesis will be presented, based on the official
+manual from \cite{ns3}. But first, It is 
+essential to understand the difference between modules and models:
+
+% \begin{itemize}[noitemsep,topsep=0pt]
+\begin{itemize}[itemsep=0pt, topsep=0pt]
+  \item \textbf{Modules} are the different libraries that form \textit{ns-3}.
+  \item \textbf{Models} are the simulated, abstract representations of real-life objects,
+  protocols, devices, etc.
+\end{itemize}
+
+As the reader may already know, \textit{ns-3} is modular. A new module will be introduced in 
+the \autoref{chap:abrmodule} as a result of this Master final project.
+
+The modules listed below are listed in alphabetical order.
+
+\subsection{Antenna Module}
+The Antenna module provides a \texttt{AntennaModel} base class as an interface for radiation
+pattern modelling of an antenna. Also, there are a set of classes derived from this base
+class that implements types of antennas with differente radiation patterns.
+
+\subsubsection{AntennaModel}
+The \texttt{AntennaModel} uses a coordinate system as shown in the \autoref{fig:ns3antenna}. This
+model uses, for a point ${p}$ in the space with Cartesian coordinates used by the \texttt{MobilityModel},
+the coordinates ${(x,y,z)}$ and transforms into spherical coordinates ${(r,\theta,\phi)}$.
+
+The radiation pattern is express as a mathematical function ${g(\theta,\phi) \rightarrow \R}$
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.35\textwidth]{img/antennamodel.png}
+  \caption{Coordinate system of the AntennaModel. Source: nsnam \cite{ns3}}
+  \label{fig:ns3antenna}
+\end{figure}
+
+\begin{itemize}[itemsep=0pt, topsep=0pt]
+  \item \textbf{IsotropicAntennaModel} 
+  
+  The \texttt{IsotropicAntennaModel} is onmidirectional, this means that the radiation pattern have
+  a 0dB gain for all direction.
+  \item \textbf{CosineAntennaModel}
+  
+  The antenna gain of the \texttt{CosineAntennaModel} is defined as:
+  \begin{equation}
+    g(\phi,\theta)=cos^n \bigg( \frac{\phi-\phi_0}{2} \bigg)
+  \end{equation}
+
+  with ${\phi_0}$ as the antenna's azimuthal orientation, this is, the direction of maximum gain. And the exponential
+  \begin{equation}
+    n=-\frac{3}{20\,log_{10} \big( cos\frac{\phi_{3dB}}{4} \big) }
+  \end{equation}
+
+  determines the wanted 3db beamwidth ${\phi_{3dB}}$.
+  \item \textbf{ParabolicAntennaModel}
+
+  In the \texttt{ParabolicAntennaModel}, the antenna gain is determined as:
+  \begin{equation}
+    g(\phi,\theta)=-min \bigg( 12 \bigg( \frac{\phi-\phi_0}{\phi_{3dB}}^2 \bigg) ,A_{max} \bigg)
+  \end{equation}
+  where ${A_{max}}$ is the maximum attenuation in dB of the antenna. 
+\end{itemize}
+
+\subsection{Buildings Module}
+The Buildings module provide various models, but these are more relevant for this thesis:
+
+\subsubsection{Building class}
+
+The \texttt{Building} model implements and tries to simulate real-life buildings, which affects
+wireless communications in different ways.
+
+A \texttt{Building} can be residential, office or commertial, has different types of external
+wall (wood, concrete with/out windows, stone blocks), has a number of floors and rooms in each floor.
+
+Some limitations have to be made:
+\begin{itemize}[topsep=0pt]
+  \item A \texttt{Building} is represented as a rectangular parallelepiped.
+  \item The walls needs to be parallel to the cardinal coordinates.
+  \item A \texttt{Building} is a grid of rooms, with z axis as the floor number and the x and y room
+  indexes start from 1 and increses along the x and y axis.
+  \item All the rooms are the same size.
+\end{itemize}
+
+\subsubsection{MobilityBuildingInfo class}
+
+The \texttt{MobilityBuildingInfo} keeps track of the mobility and positional information of 
+the nodes with respect to buildings in a simulation. A node can be inside or outside of
+a building and if the node is indoors, this class knows in which building and in which room
+the node is positioned.
+
+\subsubsection{ItuR1238PropagationLossModel}
+
+This class provides an ITU P.1238-based building-dependent indoor propagation loss model 
+that includes losses owing to building type (i.e., residential, office and commercial). 
+The following is the analytical expression:
+
+\begin{equation}
+  L_{total} = 20\,log\,f + N\,log\,d + L_f (n) - 28[dB]
+\end{equation}
+
+where ${N}$ is the power loss coefficient, ${L_f}$ is the loss depending of type of building,
+${f}$ is the frequency [MHz] and ${d}$ is de distance [m].
+
+\subsubsection{BuildingPropagationLossModel}
+
+The \texttt{BuildingsPropagationLossModel} adds a set of pathloss model elements that are 
+building-dependent and can be used to design various pathloss logics. The elements of the 
+pathloss model are discussed in the subsections below.
+
+\begin{itemize}
+  \item \textbf{External Wall Loss}
+
+  This component simulates the loss of communication from indoors to outdoors and vice versa through walls.
+  \item \textbf{Internal Wall Loss}
+
+  This component simulates the loss of penetration in indoor-to-indoor communications within a single building.
+  \item \textbf{Height Gain Model}
+
+  This component simulates the gain caused by the transmitting equipment being on a higher floor than the ground.
+  \item \textbf{Shadowing Model}
+
+  The shadowing is represented using a log-normal distribution with a variable standard deviation
+  as a function of the MobilityModel instances' relative position (inside or outdoor). For each 
+  pair of MobilityModels, a single random value is generated and remains constant during the 
+  simulation. As a result, the model is only suitable for static nodes.
+\end{itemize}
+
+\subsubsection{Pathloss logics}
+The pathloss logic provided by inheriting from \texttt{BuildingsPropagationLossModel}
+is described in the following sections.
+\begin{itemize}
+  \item \textbf{HybridBuildingPropagationLossModel}
+
+  In order to imitate multiple outdoor and interior circumstances, as well as indoor-to-outdoor 
+  and outdoor-to-indoor scenarios, the \texttt{HybridBuildingsPropagationLossModel} was created by 
+  combining various well-known pathloss models. In particular, this class combines the pathloss 
+  models listed below:
+
+  \item \textbf{OhBuildingPropagationLossModel}
+  This is a simpler propagation loss model. It uses the \texttt{OkumuraHataPropagationLossModel} and 
+  also taking account the pathloss elements of the \texttt{BuildingPropagationLossModel}.
+\end{itemize}
+
+
+
+\subsection{Internet Module}
+
+
+\subsection{LTE Module}
+
+
+\subsection{Mobility Module}
+
+
+\subsection{Network Module}
+? sockets???
+
+
+\subsection{PointToPoint NetDevice}
+
+
 
 REM
-
-MIMO
 
 LTE enb phy
 
@@ -169,7 +327,5 @@ Lossmodel
 Fading loss model
 
 Earfcn
-
-Antenna model
 
 Building
