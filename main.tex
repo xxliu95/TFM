@@ -120,14 +120,18 @@
     PointToPointEpcHelper, HybridBuildingsPropagationLossModel,
     BuildingsHelper, Building, CommandLine, ConfigStore, LteEnbRrc, RadioEnvironmentMapHelper, DoubleValue,
     UintegerValue, BooleanValue, StringValue, PointerValue, IntegerValue,
-    ConstantPositionMobilityModel, Node, Config, EnumValue, Box, LteAmc},
+    ConstantPositionMobilityModel, Node, Config, EnumValue, Box, LteAmc,
+    MyClass, Socket, TcpSocketFactory, PointToPointHelper},
     morekeywords=[2]{EnableAsciiAll, CreateFileStream, EnablePcapAll, CreateObject, Create,
     SetMobilityModel, Install, InstallEnbDevice, InstallUeDevice, Attach, EnableMacTraces,
     EnablePdcpTraces, SetSchedulerType, SetSchedulerAttribute, EnableRlcTraces, EnablePhyTraces, 
     SetEpcHelper, GetPgwNode, GetSgwNode, SetDefault, SetBoundaries, SetBuildingType,
     SetExtWallsType, SetNFloors, SetNRoomsX, SetNRoomsY, SetAttribute, SetPathlossModelAttribute,
-    SetEnbAntennaModelAttribute, SetEnbAntennaModelType, Get, Parse, ConfigureDefaults},
-    morekeywords=[3]{Ptr},
+    SetEnbAntennaModelAttribute, SetEnbAntennaModelType, Get, Parse, ConfigureDefaults,
+    Bind, Connect, Send, Recv, Close, MakeCallback, HandleRead, HandleSend, SetConnectCallback,
+    SetSendCallback, SetRecvCallback, GetTypeId, ConnectionSucceeded, ConnectionFailed,
+    SetDeviceAttribute, SetChannelAttribute},
+    morekeywords=[3]{Ptr, this},
     comment=[l]{//}
 }
 
@@ -250,7 +254,6 @@
 %   {10pt}{\Huge}[{\color{chapterdetails}\titlerule[0.8mm] }]
 % \titlespacing*{\chapter}{0pt}{0pt}{20pt}
 % \titlespacing*{\section}{0pt}{0pt}{20pt}
-
 
 
 % \titleformat{\section}{\large\sffamily\bfseries}{\thesection}{1em}{}

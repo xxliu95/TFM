@@ -336,10 +336,75 @@ The Network Module includes implementations of network related classes like
 \texttt{Packet}, \texttt{NetDevice}, TCP and UDP Sockets, etc.
 
 \subsubsection{Packets}
+A network packet is compesed by a byte buffer, a group of tags and metadata.
+The serialized content of the headers and trailers added to a packet is stored in the byte buffer. 
+The serialized form of these headers is expected to match the serialized representation of real 
+network packets bit for bit, implying that the content of a packet buffer is supposed to be the 
+same as that of a real packet.
 
 \subsubsection{Sockets}
+A socket is an abstraction that enables applications to communicate with other Internet hosts, among other services,
+and exchange reliable byte streams and unreliable datagrams.
+
+\begin{itemize}
+  \item \textbf{ns-3 Sockets API} 
+  
+  The native sockets API for \textit{ns-3} provides an interface 
+  to TCP and UDP. Although, the \texttt{ns3::Socket} have some differences compared to
+  real sockets. 
+
+  \item \textbf{Using Sockets} 
+
+  In \textit{ns-3}, if an application wants to use sockets must create one first. By 
+  calling \texttt{CreateSocket}, \textit{ns-3} creates a smart pointer to a \texttt{Socket} object.
+  \textit{ns-3} sockets have all the functions of a real socket, including bind, connect, send, receive
+  and close.
+
+  \begin{lstlisting}[language=myC++, caption={ns-3 Socket programming}, captionpos=b]
+    Ptr<Node> node;
+    // Create a TCP socket
+    Ptr<Socket> mySocket = Socket::CreateSocket (node, TcpSocketFactory::GetTypeId ());
+    // Functions
+    mySocket->Bind();
+    mySocket->Connect( ... );
+    mySocket->Send( ... );
+    mySocket->Recv( ... );
+    mySocket->Close();
+  \end{lstlisting}
+
+  In addition, the \texttt{Socket} class can set up events to make callbacks. For example, 
+  \texttt{SetConnectCallback} is called when a connection is made, whether it succeeded of 
+  failed, \texttt{SetSendCallback} is invoked when the send buffer is available
+  and \texttt{SetRecvCallback} will notify when the data is received.
+
+  \begin{lstlisting}[language=myC++, caption={Socket callbacks}, captionpos=b]
+    mySocket->SetConnectCallback (
+      MakeCallback (&MyClass::ConnectionSucceeded, this),
+      MakeCallback (&MyClass::ConnectionFailed, this)
+    );
+    mySocket->SetSendCallback (MakeCallback (
+      &MyClass::HandleSend, this));
+    mySocket->SetRecvCallback (MakeCallback (
+      &MyClass::HandleRead, this));
+  \end{lstlisting}
+\end{itemize}
 
 \subsection{PointToPoint NetDevice}
+The \textit{ns-3} point-to-point model simulates a very basic point-to-point data link that connects 
+two \texttt{PointToPointNetDevice} devices across a \texttt{PointToPointChannel}. This can be compared to a 
+full duplex RS-232 or RS-422 connection with no handshaking and no null modem.
+
+The create point-to-point net devices and channels, \texttt{PointToPointHelper} is used. To
+connect two nodes, simply call the \texttt{Install} function as shown here:
+
+\begin{lstlisting}[language=myC++, caption={PointToPointHelper}, captionpos=b]
+  NodeContainer n;
+  n.Create (2);
+  PointToPointHelper p2ph;
+  p2ph.SetDeviceAttribute ("DataRate", StringValue ("10Mbps"));
+  p2ph.SetChannelAttribute ("Delay", StringValue ("5ms"));
+  NetDeviceContainer devs = p2ph.Install (n);
+\end{lstlisting}
 
 
 \subsection{LTE Module}
