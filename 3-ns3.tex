@@ -72,6 +72,15 @@ This section will go over several networking concepts that have a specific meani
   \texttt{NetDevices} to \texttt{Nodes}, \texttt{NetDevices} to \texttt{Channels}, assigning IP addresses, etc. 
 \end{itemize}
 
+The \autoref{fig:ns3arch} shows a high level node architecture.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\textwidth]{img/node.png}
+  \caption{ns-3 High-level node architecture. Source:\cite{ns3} }
+  \label{fig:ns3arch}
+\end{figure}
+
 \section{Logging Module}
 Message logging is a basic feature for large softwares, and \textit{ns-3} is no different. \textit{ns-3} 
 offer a complete module for message logging with configurable verbosity levels. This means that logging 
@@ -140,7 +149,7 @@ of code:
 This will generate the output from \texttt{pointToPoint} to a file named \texttt{out.tr}.
 
 \subsection{PCAP Tracing}
-The ns-3 device helpers can also create \texttt{.pcap} trace files. The \textit{pcap} file
+The \textit{ns-3} device helpers can also create \texttt{.pcap} trace files. The \textit{pcap} file
 contains the packets captured during the simulation. \textit{Wireshark} or \textit{tcpdump} 
 are programs capable of reading and visualizing \textit{pcap} files.
 
@@ -214,7 +223,7 @@ The radiation pattern is express as a mathematical function ${g(\theta,\phi) \ri
 \end{itemize}
 
 \subsection{Buildings Module}
-The Buildings module provide various models, but these are more relevant for this thesis:
+The Buildings module provide various models, but these are the most relevant for this thesis:
 
 \subsubsection{Building class}
 
@@ -272,8 +281,8 @@ pathloss model are discussed in the subsections below.
   \item \textbf{Shadowing Model}
 
   The shadowing is represented using a log-normal distribution with a variable standard deviation
-  as a function of the MobilityModel instances' relative position (inside or outdoor). For each 
-  pair of MobilityModels, a single random value is generated and remains constant during the 
+  as a function of the \texttt{MobilityModel} instances' relative position (inside or outdoor). For each 
+  pair of \texttt{MobilityModels}, a single random value is generated and remains constant during the 
   simulation. As a result, the model is only suitable for static nodes.
 \end{itemize}
 
@@ -281,7 +290,7 @@ pathloss model are discussed in the subsections below.
 The pathloss logic provided by inheriting from \texttt{BuildingsPropagationLossModel}
 is described in the following sections.
 \begin{itemize}
-  \item \textbf{HybridBuildingPropagationLossModel}
+  \item \textbf{HybridBuildingsPropagationLossModel}
 
   In order to imitate multiple outdoor and interior circumstances, as well as indoor-to-outdoor 
   and outdoor-to-indoor scenarios, the \texttt{HybridBuildingsPropagationLossModel} was created by 
@@ -300,16 +309,35 @@ A \texttt{Node} with the Internet Stack installed is called a Internet Node.
 In order to use the Internet Protocol, a node should be assigned an IP address. It can be done manually
 or through the \textit{Dynamic Host Configuration Protocol (DHCP)}.
 
-Full bidirectional TCP with connection setup and close logic is supported by the native ns-3 TCP model.
+Full bidirectional TCP with connection setup and close logic is supported by the native \textit{ns-3} TCP model.
 Various TCP congestion algorithms are also available, such as New Reno, Cubic, HighSpeed, etc.
 
 
 \subsection{Mobility Module}
+The mobility module in \textit{ns-3} includes model to keep track the position and movement of the nodes and objects 
+in cartesian coordinates and also a number of helper classes used for placing nodes and set up mobility 
+models.
+
+The \texttt{MobilityModel} is the base class for all the subclasses for different moving paths or behaviours.
+The class \texttt{PositionAllocator} is typically used for seting the initial position of objects. \texttt{MobilityHelper}
+combines a mobility model and position allocator used for adding mobility capabilities for a set 
+of nodes.
+
+Some useful subclasses of \texttt{MobilityModel} are:
+\begin{itemize}[noitemsep, topsep=0pt]
+  \item \texttt{ConstantPositionMobilityModel} for stationary nodes.
+  \item \texttt{ConstantVelocityMobilityModel} for contant velocity moving nodes.
+  \item \texttt{RandomWalk2SMobilityModel} for random walking in a 2D plane.
+\end{itemize}
 
 
 \subsection{Network Module}
-? sockets???
+The Network Module includes implementations of network related classes like 
+\texttt{Packet}, \texttt{NetDevice}, TCP and UDP Sockets, etc.
 
+\subsubsection{Packets}
+
+\subsubsection{Sockets}
 
 \subsection{PointToPoint NetDevice}
 
@@ -318,10 +346,10 @@ Various TCP congestion algorithms are also available, such as New Reno, Cubic, H
 There are two main components in the LTE-EPC simulation model.
 
 \begin{itemize}[topsep=0pt, noitemsep]
-  \item \textbf{LTE Model}. Include models for the UE and the eNodeB nodes. Also the LTE Radio Protocol
+  \item \textbf{LTE Model}. Includes models for the UE and the eNodeB nodes. Also the LTE Radio Protocol
   Stack (PHY, MAC, RLC, etc.).
 
-  \item \textbf{EPC Model}. Include models for the entities, interfaces and protocols in the Evolver Packet Core.
+  \item \textbf{EPC Model}. Includes models for the entities, interfaces and protocols in the Evolved Packet Core.
 \end{itemize}
 
 \subsubsection{LteHelper}
@@ -365,8 +393,7 @@ This is a code snipper to create UEs and eNodeBs with \texttt{LteHelper}:
   \begin{itemize}
     \item[$\circ$] \textbf{Automatic Attachment}
 
-    This method uses the \textit{Strengh of the Received Signal (RSRP)} as the criteria to choose 
-    , in the initial cell selection process, which eNodeB to connect to. The automatic attachment 
+    This method uses the strengh of the received signal as the criteria to choose, in the initial cell selection process, which eNodeB to connect to. The automatic attachment 
     works by calling:
 
     \begin{lstlisting}[language=myC++,caption={UE Automatic Attachment}, captionpos=b]
@@ -397,61 +424,169 @@ This is a code snipper to create UEs and eNodeBs with \texttt{LteHelper}:
 \subsubsection{EpcHelper}
 The \texttt{EpcHelper} allows the simulation of the Evolve Packet Core. The usage of EPC with 
 LTE devices allows for IPv4 and IPv6 networking. To put it another way,it is possible to use 
-standard ns-3 apps and sockets across IPv4 and IPv6 via LTE, as well as connect an LTE network 
+standard \textit{ns-3} apps and sockets across IPv4 and IPv6 via LTE, as well as connect an LTE network 
 to any other IPv4 and IPv6 network in the simulation.
 
 \begin{lstlisting}[language=myC++,caption={Enable Evolved Packet Core}, captionpos=b]
   Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
   Ptr<PointToPointEpcHelper> epcHelper = CreateObject<PointToPointEpcHelper> ();
   lteHelper->SetEpcHelper (epcHelper);
+
+  // To access PGW or SGW 
+  Ptr<Node> pgw = epcHelper->GetPgwNode ();
+  Ptr<Node> sgw = epcHelper->GetSgwNode ();
+\end{lstlisting}
+
+\subsubsection{MAC}
+\begin{itemize}
+  \item \textbf{MAC Scheduler}
+  
+  In \textit{ns-3}, there are several types of MAC schedulers available. User can choose which 
+  one to use with the \texttt{LteHelper}:
+
+  \begin{lstlisting}[language=myC++,caption={MAC Scheduler}, captionpos=b]
+    Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
+    //PSS scheduler
+    lteHelper->SetSchedulerType ("ns3::PssFfMacScheduler");     
+
+    // Also can set Scheduler Attribute
+    lteHelper->SetSchedulerAttribute("nMux",                   UIntegerValue(yourvalue)); 
+  \end{lstlisting}
+
+  \item \textbf{AMC \& CQI}
+  
+  In terms of selecting MCSs and generating CQIs, the simulator offers two options. 
+  The first is the implementation by \cite{piro} and operates on a per-RB basis, and the other 
+  is based on the physical error mode.
+
+  \begin{lstlisting}[language=myC++,caption={AMC Model}, captionpos=b]
+    // Piro
+    Config::SetDefault ("ns3::LteAmc::AmcModel", EnumValue (LteAmc::PiroEW2010));
+    // Physical error model
+    Config::SetDefault ("ns3::LteAmc::AmcModel", EnumValue (LteAmc::MiErrorModel));
+  \end{lstlisting}
+\end{itemize}
+
+% \subsection{UE PHY Measurements Model}
+
+\subsubsection{Mobility Model with Buildings}
+The propagation model to be used with the LTE module is defined in the
+Buildings module.
+
+\begin{lstlisting}[language=myC++,caption={Mobility Model}, captionpos=b]
+  MobilityHelper mobility;
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+
+  Ptr<Building> b = CreateObject <Building> ();
+  // Box (xmin, xmax, ymin, ymax, zmin, zmax)
+  b->SetBoundaries (Box (0.0, 10.0, 0.0, 20.0, 0.0, 20.0));
+  b->SetBuildingType (Building::Residential);
+  b->SetExtWallsType (Building::ConcreteWithWindows);
+  b->SetNFloors (3);
+  b->SetNRoomsX (3);
+  b->SetNRoomsY (2);
+
+  mobility.Install (ueNodes);
+  mobility.Install (enbNodes);
+  BuildingsHelper::Install (ueNodes);
+  BuildingsHelper::Install (enbNodes);
+\end{lstlisting}
+
+This creates a residential building, concrete with windows, with 
+3 floors and 6 rooms each floor. It is set that all UEs are in a 
+constant position, but other mobility models are also possible.
+
+The LTE module is also compatible with existing propagation loss models.
+Only the propagation from the UEs to the base stations are computed.
+
+\begin{lstlisting}[language=myC++,caption={Pathloss Model}, captionpos=b]
+  Ptr<HybridBuildingsPropagationLossModel> propagationLossModel = CreateObject<HybridBuildingsPropagationLossModel> ();
+  lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::HybridBuildingsPropagationLossModel"));
+  lteHelper->SetPathlossModelAttribute ("ShadowSigmaExtWalls",   DoubleValue (1));
+  lteHelper->SetPathlossModelAttribute ("ShadowSigmaOutdoor",    DoubleValue (0));
+  lteHelper->SetPathlossModelAttribute ("ShadowSigmaIndoor",     DoubleValue (0));
 \end{lstlisting}
 
 
-Emulation mode
-
-\subsubsection{MAC}
-// MAC scheduler 
-// AMC 
-// CQI
-
-\subsection{UE PHY Measurements Model}
-
-\subsubsection{Mobility Model with Buildings}
-// manual y tutorial
-
 \subsubsection{AntennaModel \& MIMO Model}
+Any model of \texttt{AntennaModel} is supported, by default, the \texttt{IsotropicAntennaModel} is
+used for both eNBs and UEs. In case of using multiple antennas, \textit{ns-3} offers different MIMO operation 
+modes. Here is an example of a cosine antenna:
 
+\begin{lstlisting}[language=myC++,caption={Antenna \& MIMO Model}, captionpos=b]
+  lteHelper->SetEnbAntennaModelType ("ns3::CosineAntennaModel");
+  lteHelper->SetEnbAntennaModelAttribute ("Orientation",          DoubleValue (0.0));
+  lteHelper->SetEnbAntennaModelAttribute ("Beamwidth",            DoubleValue (70));
+  // MaxGain in dBs
+  lteHelper->SetEnbAntennaModelAttribute ("MaxGain",              DoubleValue (0.0));
+  // Set the MIMO transmission mode
+  Config::SetDefault ("ns3::LteEnbRrc::DefaultTransmissionMode", UintegerValue (2)); // MIMO Spatial Multiplexity (2 layers)
+\end{lstlisting}
 \subsubsection{Radio Environment Maps}
 
+With this class is possible to create a Radio Environment Map (REM), 
+which is a uniform 2D grid of values that reflect the signal-to-noise ratio in the
+downlink with regard to the eNB with the strongest signal at each point, to a file by 
+using the class \texttt{RadioEnvironmentMapHelper}.
 
+Using a software like gnuplot\footnote{http://www.gnuplot.info/}, the output file can be visualized:
+\begin{lstlisting}[language=myC++,caption={Radio Environment Maps helper}, captionpos=b]
+  Ptr<RadioEnvironmentMapHelper> remHelper = CreateObject<RadioEnvironmentMapHelper> ();
+  remHelper->SetAttribute ("Channel", PointerValue (lteHelper->GetDownlinkSpectrumChannel ()));
+  remHelper->SetAttribute ("OutputFile", StringValue ("rem.out"));
+  remHelper->SetAttribute ("XMin", DoubleValue (-400.0));
+  remHelper->SetAttribute ("XMax", DoubleValue (400.0));
+  remHelper->SetAttribute ("XRes", UintegerValue (100));
+  remHelper->SetAttribute ("YMin", DoubleValue (-300.0));
+  remHelper->SetAttribute ("YMax", DoubleValue (300.0));
+  remHelper->SetAttribute ("YRes", UintegerValue (75));
+  remHelper->SetAttribute ("Z", DoubleValue (0.0));
+  remHelper->SetAttribute ("UseDataChannel", BooleanValue (true));
+  remHelper->SetAttribute ("RbId", IntegerValue (10));
+  remHelper->Install ();
+\end{lstlisting}
+
+\autoref{fig:rem} shows an example of a Radio Environment Map.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.77\textwidth]{img/rem.png}
+  \caption{Example Radio Environment Map. Source:\cite{ns3} }
+  \label{fig:rem}
+\end{figure}
 
 \subsection{Configuration parameters}
-// por completar
+The \textit{ns-3} attribute system is the entity that manages all the parameters. It is 
+possible to use input files using \texttt{ConfigStore} and set initial values for default 
+and global paramaters.
+
+At the beginning of the \texttt{main} function, include:
+
+\begin{lstlisting}[language=myC++, caption={Configuration parameters}, captionpos=b]
+  Config::SetDefault ("ns3::ConfigStore::Filename", StringValue ("sim-input.txt"));
+  Config::SetDefault ("ns3::ConfigStore::Mode", StringValue ("Load"));
+  CommandLine cmd (__FILE__);
+  cmd.Parse (argc, argv);
+  ConfigStore inputConfig;
+  inputConfig.ConfigureDefaults ();
+  cmd.Parse (argc, argv);
+\end{lstlisting}
+
+And also make sure to include \texttt{\#include "ns3/config-store.h"} in the script. Then create
+a text file named as defined before and specify the new default values to be used:
+
 \begin{lstlisting}[language=myshell, caption={Configuration parameters}, captionpos=b]
   default ns3::LteHelper::Scheduler "ns3::PfFfMacScheduler"
   default ns3::LteHelper::PathlossModel "ns3::FriisSpectrumPropagationLossModel"
-  default ns3::LteEnbNetDevice::UlBandwidth "25"
   default ns3::LteEnbNetDevice::DlBandwidth "25"
   default ns3::LteEnbNetDevice::DlEarfcn "100"
   default ns3::LteEnbNetDevice::UlEarfcn "18100"
   default ns3::LteUePhy::TxPower "10"
-  default ns3::LteUePhy::NoiseFigure "9"
   default ns3::LteEnbPhy::TxPower "30"
-  default ns3::LteEnbPhy::NoiseFigure "5"
+  default ns3::LteEnbRrc::SrsPeriodicity "40"
+  default ns3::TcpSocket::SndBufSize "524280"
+  default ns3::TcpSocket::RcvBufSize "524280"
+  global RngSeed "24"
+  global simTime "10.0"
+  global nRB "100"
 \end{lstlisting}
-
-REM
-
-LTE enb phy
-
-UM buffer size
-
-TCP new reno?
-
-Lossmodel
-
-Fading loss model
-
-Earfcn
-
-Building

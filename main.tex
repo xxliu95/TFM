@@ -111,16 +111,22 @@
 % \renewcommand\lstlistlistingname{Code Snippet}
 
  \lstdefinelanguage{myshell}{
-    morekeywords={export, cd, wget, mkdir, default},
+    morekeywords={export, cd, wget, mkdir, default, global},
     morecomment=[l]{\#}
 }
 
 \lstdefinelanguage{myC++}{
     morekeywords=[1]{AsciiTraceHelper, LteHelper, NodeContainer, MobilityHelper, NetDeviceContainer,
-    PointToPointEpcHelper},
+    PointToPointEpcHelper, HybridBuildingsPropagationLossModel,
+    BuildingsHelper, Building, CommandLine, ConfigStore, LteEnbRrc, RadioEnvironmentMapHelper, DoubleValue,
+    UintegerValue, BooleanValue, StringValue, PointerValue, IntegerValue,
+    ConstantPositionMobilityModel, Node, Config, EnumValue, Box, LteAmc},
     morekeywords=[2]{EnableAsciiAll, CreateFileStream, EnablePcapAll, CreateObject, Create,
     SetMobilityModel, Install, InstallEnbDevice, InstallUeDevice, Attach, EnableMacTraces,
-    EnablePdcpTraces, EnableRlcTraces, EnablePhyTraces, SetEpcHelper},
+    EnablePdcpTraces, SetSchedulerType, SetSchedulerAttribute, EnableRlcTraces, EnablePhyTraces, 
+    SetEpcHelper, GetPgwNode, GetSgwNode, SetDefault, SetBoundaries, SetBuildingType,
+    SetExtWallsType, SetNFloors, SetNRoomsX, SetNRoomsY, SetAttribute, SetPathlossModelAttribute,
+    SetEnbAntennaModelAttribute, SetEnbAntennaModelType, Get, Parse, ConfigureDefaults},
     morekeywords=[3]{Ptr},
     comment=[l]{//}
 }
