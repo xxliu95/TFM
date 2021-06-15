@@ -132,7 +132,7 @@ the output will be in ASCII files, hence the name.
 To enable ASCII Tracing, right before the call to \texttt{Simulator::Run ()}, add the following lines
 of code:
 
-\begin{lstlisting}[escapechar=@, language=myC++,caption={ASCII Tracing}, captionpos=b]
+\begin{lstlisting}[escapechar=@, language=myC++,caption={ASCII tracing}, captionpos=b]
   AsciiTraceHelper ascii;
   pointToPoint.EnableAsciiAll (ascii.CreateFileStream ("out.tr"));
 \end{lstlisting}
@@ -145,7 +145,7 @@ contains the packets captured during the simulation. \textit{Wireshark} or \text
 are programs capable of reading and visualizing \textit{pcap} files.
 
 To enable \textit{pcap} tracing simply add:
-\begin{lstlisting}[escapechar=@, language=myC++,caption={PCAP Tracing}, captionpos=b]
+\begin{lstlisting}[escapechar=@, language=myC++,caption={PCAP tracing}, captionpos=b]
   pointToPoint.EnablePcapAll ("myfirst");
 \end{lstlisting}
 
@@ -166,8 +166,6 @@ essential to understand the difference between modules and models:
 
 As the reader may already know, \textit{ns-3} is modular. A new module will be introduced in 
 the \autoref{chap:abrmodule} as a result of this Master final project.
-
-The modules listed below are listed in alphabetical order.
 
 \subsection{Antenna Module}
 The Antenna module provides a \texttt{AntennaModel} base class as an interface for radiation
@@ -295,12 +293,15 @@ is described in the following sections.
   also taking account the pathloss elements of the \texttt{BuildingPropagationLossModel}.
 \end{itemize}
 
-
-
 \subsection{Internet Module}
+This module includes the implementations of TCP/IP related components like IPv4, ARP, UDP, TCP and so on.
+A \texttt{Node} with the Internet Stack installed is called a Internet Node.
 
+In order to use the Internet Protocol, a node should be assigned an IP address. It can be done manually
+or through the \textit{Dynamic Host Configuration Protocol (DHCP)}.
 
-\subsection{LTE Module}
+Full bidirectional TCP with connection setup and close logic is supported by the native ns-3 TCP model.
+Various TCP congestion algorithms are also available, such as New Reno, Cubic, HighSpeed, etc.
 
 
 \subsection{Mobility Module}
@@ -313,6 +314,131 @@ is described in the following sections.
 \subsection{PointToPoint NetDevice}
 
 
+\subsection{LTE Module}
+There are two main components in the LTE-EPC simulation model.
+
+\begin{itemize}[topsep=0pt, noitemsep]
+  \item \textbf{LTE Model}. Include models for the UE and the eNodeB nodes. Also the LTE Radio Protocol
+  Stack (PHY, MAC, RLC, etc.).
+
+  \item \textbf{EPC Model}. Include models for the entities, interfaces and protocols in the Evolver Packet Core.
+\end{itemize}
+
+\subsubsection{LteHelper}
+The \texttt{LteHelper} is a helper which manages the LTE radio access network's 
+configuration as well as the setup and release of EPS bearers. The API definition and 
+implementation are both provided by the \texttt{LteHelper} class.
+
+This is a code snipper to create UEs and eNodeBs with \texttt{LteHelper}:
+
+\begin{lstlisting}[language=myC++,caption={LteHelper usage}, captionpos=b]
+  // Create LteHelper and the nodes
+  Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
+  NodeContainer enbNodes;
+  enbNodes.Create (1);
+  NodeContainer ueNodes;
+  ueNodes.Create (2);
+
+  // Set the mobility model
+  MobilityHelper mobility;
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.Install (enbNodes);
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.Install (ueNodes);
+
+  // Install NetDevices to the nodes
+  NetDeviceContainer enbDevs;
+  enbDevs = lteHelper->InstallEnbDevice (enbNodes);
+  NetDeviceContainer ueDevs;
+  ueDevs = lteHelper->InstallUeDevice (ueNodes);  
+
+  // Attach UEs to the eNodeB
+  lteHelper->Attach (ueDevs, enbDevs.Get (0));
+\end{lstlisting}
+
+\begin{itemize}
+  \item \textbf{Network Attachment}
+  
+  To connect an UE to the network, the UE needs to be attached to an eNodeB. This is done by calling the
+  \texttt{LteHelper::Attach} function. The are two possible ways for network attachment.
+
+  \begin{itemize}
+    \item[$\circ$] \textbf{Automatic Attachment}
+
+    This method uses the \textit{Strengh of the Received Signal (RSRP)} as the criteria to choose 
+    , in the initial cell selection process, which eNodeB to connect to. The automatic attachment 
+    works by calling:
+
+    \begin{lstlisting}[language=myC++,caption={UE Automatic Attachment}, captionpos=b]
+    lteHelper->Attach (ueDevs); // attach one or more UEs to a strongest cell
+    \end{lstlisting}
+    
+    \item[$\circ$] \textbf{Manual Attachment}
+    Alternatively, selecting the eNodeB at the beginning of the simulation is also possible:
+
+    \begin{lstlisting}[language=myC++,caption={UE Manual Attachment}, captionpos=b]
+    lteHelper->Attach (ueDevs, enbDev); // attach one or more UEs to a single eNodeB
+    \end{lstlisting}
+  \end{itemize}
+
+  \item \textbf{Simulation Output}
+  
+  The LTE module offer PHY, MAC, RLC, and PDCP level \textit{Key Performance Indicators (KPI)}
+  that can be enabled using \textbf{LteHelper}:
+
+  \begin{lstlisting}[language=myC++,caption={Enable LTE trace outputs}, captionpos=b]
+    lteHelper->EnablePhyTraces ();
+    lteHelper->EnableMacTraces ();
+    lteHelper->EnableRlcTraces ();
+    lteHelper->EnablePdcpTraces ();
+  \end{lstlisting}
+\end{itemize}
+
+\subsubsection{EpcHelper}
+The \texttt{EpcHelper} allows the simulation of the Evolve Packet Core. The usage of EPC with 
+LTE devices allows for IPv4 and IPv6 networking. To put it another way,it is possible to use 
+standard ns-3 apps and sockets across IPv4 and IPv6 via LTE, as well as connect an LTE network 
+to any other IPv4 and IPv6 network in the simulation.
+
+\begin{lstlisting}[language=myC++,caption={Enable Evolved Packet Core}, captionpos=b]
+  Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
+  Ptr<PointToPointEpcHelper> epcHelper = CreateObject<PointToPointEpcHelper> ();
+  lteHelper->SetEpcHelper (epcHelper);
+\end{lstlisting}
+
+
+Emulation mode
+
+\subsubsection{MAC}
+// MAC scheduler 
+// AMC 
+// CQI
+
+\subsection{UE PHY Measurements Model}
+
+\subsubsection{Mobility Model with Buildings}
+// manual y tutorial
+
+\subsubsection{AntennaModel \& MIMO Model}
+
+\subsubsection{Radio Environment Maps}
+
+
+
+\subsection{Configuration parameters}
+// por completar
+\begin{lstlisting}[language=myshell, caption={Configuration parameters}, captionpos=b]
+  default ns3::LteHelper::Scheduler "ns3::PfFfMacScheduler"
+  default ns3::LteHelper::PathlossModel "ns3::FriisSpectrumPropagationLossModel"
+  default ns3::LteEnbNetDevice::UlBandwidth "25"
+  default ns3::LteEnbNetDevice::DlBandwidth "25"
+  default ns3::LteEnbNetDevice::DlEarfcn "100"
+  default ns3::LteEnbNetDevice::UlEarfcn "18100"
+  default ns3::LteUePhy::TxPower "10"
+  default ns3::LteUePhy::NoiseFigure "9"
+  default ns3::LteEnbPhy::TxPower "30"
+  default ns3::LteEnbPhy::NoiseFigure "5"
+\end{lstlisting}
 
 REM
 
