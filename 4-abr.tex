@@ -56,7 +56,9 @@ and work with other \textit{ns-3} modules and models.
 
 \section{Models}
 \label{sec:abrmodels}
-This section will go through all the models, classes and helpers in the ABR module.
+This section will go through all the models, classes and helpers in the ABR module and how they work 
+together.
+
 
 \subsection{AbrClient}
 The \texttt{AbrClient} is an implementation of \texttt{ns3::Application}. This class 
@@ -92,8 +94,8 @@ functions depending on the designated task and delay.
 
 \subsection{AbrServer}
 
-The \texttt{AbrClient} is an implementation of \texttt{ns3::Application}. This class 
-receives HTTP-like requests from the \texttt{AbrServer} and sends the requested segment.
+The \texttt{AbrServer} is an implementation of \texttt{ns3::Application}. This class 
+receives HTTP-like requests from the \texttt{AbrClient} and sends the requested segment.
 
 The request is in the format:
 
@@ -105,6 +107,15 @@ The request is in the format:
 For example, "\texttt{GET 4 1 3}" means "GET 1 segment of quality index 4 starting from the 
 ${3^{rd}}$ segment".
 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\textwidth]{img/abrserver.png}
+  \caption{ABR Server.}
+  \label{fig:abrserver}
+\end{figure}
+
+
 The \texttt{AbrServer} is created with the \texttt{AbrHelper} and the listening port as the 
 parameter. Then the
 server application needs to be installed on the server node. When the simulation starts, the 
@@ -113,12 +124,6 @@ to listen.
 The socket is set will callback functions. When the sockets are connected, the server 
 will schedule new callbacks to handle reading requests and sending data.
 
-\begin{figure}[]
-  \centering
-  \includegraphics[width=\textwidth]{img/abrserver.png}
-  \caption{ABR Server.}
-  \label{fig:abrserver}
-\end{figure}
 
 \subsection{AbrVariables}
 
@@ -149,16 +154,17 @@ a set of essential data structures. These data structures are:
 \end{itemize}
 
 Before the simulation starts, the \texttt{AbrVariables} class initializes the
-variables. For the segments, a set of random sizes are calculated based on the resolution,
-framerate and the encoding bitrate for each representation. There are a predefined set of \texttt{Representations}
-that can be changed in the source file.
+variables. Starting with the representations, there are a predefined set of \texttt{Representations}
+by default, but they can be changed in the source file. 
+Continuing with the segments, their sizes are calculated based on the resolution,
+framerate and the encoding bitrate for each representation. 
 
-The possibility of creating a MPD file parser has been considered, 
-but it can be done in the future as an improvement.
+Also, the possibility of 
+creating a MPD file parser has been considered, but it can be done in the future as an improvement.
 
 \subsection{AbrHelper}
 
-
+\texttt{AbrHelper}
 
 \subsection{AbrAlgorithm}
 

@@ -1,0 +1,289 @@
+\chapter{ns-3 Tutorial} 
+\label{chap:ns3tuto}
+
+\section{Getting Started}
+
+The prerequisites for the \textit{ns-3} release version 3.32 are the following tools:
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{@{}ll@{}}
+  \toprule
+  Prerequisite & Package/version                             \\ \midrule 
+  C++ compiler & \texttt{clang++} or \texttt{g++} (\texttt{g++} version 4.9 or greater) \\
+  Python       & \texttt{python3}  version \textgreater{}= 3.5         \\
+  Git          & any recent version                          \\ 
+  tar          & any recent version                          \\ 
+  bunzip2      & any recent version                          \\ \bottomrule \\
+  \end{tabular}
+  \caption{Prerequisites for ns-3}
+\end{table}
+
+Start by downloading the source archive from \href{https://www.nsnam.org/release/ns-allinone-3.32.tar.bz2}{nsnam}
+or \href{https://gitlab.com/nsnam/ns-3-allinone.git}{gitlab}. Then build \textit{ns-3} with \texttt{build.py}:
+
+\begin{lstlisting}[language=myshell,caption={Download and installation of ns-3}, captionpos=b]
+  # Download from nsnam
+  $ cd
+  $ mkdir workspace
+  $ cd workspace
+  $ wget https://www.nsnam.org/release/ns-allinone-3.32.tar.bz2
+  $ |\color{myblue}tar| xjf ns-allinone-3.32.tar.bz2
+  $ cd ns-allinone-3.32
+  # Building ns-3
+  $ ./build.py --enable-examples --enable-tests
+  # Running a script
+  # Create or copy a script to the scratch directory
+  $ cp examples/tutorial/first.cc scratch/myfirst.cc
+  $ ./waf --run scratch/myfirst
+\end{lstlisting}
+
+\textbf{Logging Module}
+
+Enable logging:
+
+\begin{lstlisting}[escapechar=@, language=myshell,caption={Enabling logging in ns-3}, captionpos=b]
+  $ export 'NS_LOG=UdpEchoClientApplication=level_all|prefix_func|prefix_time:UdpEchoServerApplication=level_all|prefix_func|prefix_time'
+\end{lstlisting}
+
+To disable logging simply type:
+
+\begin{lstlisting}[escapechar=@, language=myshell,caption={Disabling logging in ns-3}, captionpos=b]
+  $ export NS_LOG=
+\end{lstlisting}
+
+\textbf{Command Line Arguments}
+
+An example of a command could be like this:
+
+\begin{lstlisting}[escapechar=@, language=myshell,caption={Command line arguments}, captionpos=b]
+  # To check help 
+  $ ./waf --run "scratch/myfirst --PrintHelp"
+  # To check variables for PointToPointNetDevice
+  $ ./waf --run "scratch/myfirst --PrintAttributes=ns3::PointToPointNetDevice"
+  # We set the Datarate to 5Mbps
+  $ ./waf --run "scratch/myfirst --ns3::PointToPointNetDevice::DataRate=5Mbps"
+\end{lstlisting}
+
+\textbf{ASCII Tracing}
+
+To enable ASCII Tracing, right before the call to \texttt{Simulator::Run ()}, add the following lines
+of code:
+
+\begin{lstlisting}[escapechar=@, language=myC++,caption={ASCII tracing}, captionpos=b]
+  AsciiTraceHelper ascii;
+  pointToPoint.EnableAsciiAll (ascii.CreateFileStream ("out.tr"));
+\end{lstlisting}
+
+This will generate the output from \texttt{pointToPoint} to a file named \texttt{out.tr}.
+
+\textbf{PCAP Tracing}
+
+To enable \textit{pcap} tracing simply add:
+\begin{lstlisting}[escapechar=@, language=myC++,caption={PCAP tracing}, captionpos=b]
+  pointToPoint.EnablePcapAll ("myfirst");
+\end{lstlisting}
+
+\textbf{Sockets}
+
+Creating a socket:
+
+\begin{lstlisting}[language=myC++, caption={ns-3 Socket programming}, captionpos=b]
+  Ptr<Node> node;
+  // Create a TCP socket
+  Ptr<Socket> mySocket = Socket::CreateSocket (node, TcpSocketFactory::GetTypeId ());
+  // Functions
+  mySocket->Bind();
+  mySocket->Connect( ... );
+  mySocket->Send( ... );
+  mySocket->Recv( ... );
+  mySocket->Close();
+\end{lstlisting}
+
+For callbacks:
+
+\begin{lstlisting}[language=myC++, caption={Socket callbacks}, captionpos=b]
+  mySocket->SetConnectCallback (
+    MakeCallback (&MyClass::ConnectionSucceeded, this),
+    MakeCallback (&MyClass::ConnectionFailed, this)
+  );
+  mySocket->SetSendCallback (MakeCallback (
+    &MyClass::HandleSend, this));
+  mySocket->SetRecvCallback (MakeCallback (
+    &MyClass::HandleRead, this));
+\end{lstlisting}
+
+\textbf{PointToPoint NetDevice}
+
+\begin{lstlisting}[language=myC++, caption={PointToPointHelper}, captionpos=b]
+  NodeContainer n;
+  n.Create (2);
+  PointToPointHelper p2ph;
+  p2ph.SetDeviceAttribute ("DataRate", StringValue ("10Mbps"));
+  p2ph.SetChannelAttribute ("Delay", StringValue ("5ms"));
+  NetDeviceContainer devs = p2ph.Install (n);
+\end{lstlisting}
+
+\section{LTE Module}
+\textbf{LteHelper}
+\label{sec:ltehelpercode}
+
+\begin{lstlisting}[language=myC++,caption={LteHelper usage}, captionpos=b]
+  // Create LteHelper and the nodes
+  Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
+  NodeContainer enbNodes;
+  enbNodes.Create (1);
+  NodeContainer ueNodes;
+  ueNodes.Create (2);
+
+  // Set the mobility model
+  MobilityHelper mobility;
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.Install (enbNodes);
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+  mobility.Install (ueNodes);
+
+  // Install NetDevices to the nodes
+  NetDeviceContainer enbDevs;
+  enbDevs = lteHelper->InstallEnbDevice (enbNodes);
+  NetDeviceContainer ueDevs;
+  ueDevs = lteHelper->InstallUeDevice (ueNodes);  
+
+  // Attach UEs to the eNodeB
+  lteHelper->Attach (ueDevs, enbDevs.Get (0));
+\end{lstlisting}
+
+\textbf{Network Attachment}
+
+\begin{lstlisting}[language=myC++,caption={UE Automatic Attachment}, captionpos=b]
+  lteHelper->Attach (ueDevs); // attach one or more UEs to a strongest cell
+  lteHelper->Attach (ueDevs, enbDev); // attach one or more UEs to a single eNodeB
+\end{lstlisting}
+
+
+\textbf{EpcHelper}
+
+\begin{lstlisting}[language=myC++,caption={Enable Evolved Packet Core}, captionpos=b]
+  Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
+  Ptr<PointToPointEpcHelper> epcHelper = CreateObject<PointToPointEpcHelper> ();
+  lteHelper->SetEpcHelper (epcHelper);
+
+  // To access PGW or SGW 
+  Ptr<Node> pgw = epcHelper->GetPgwNode ();
+  Ptr<Node> sgw = epcHelper->GetSgwNode ();
+\end{lstlisting}
+
+\textbf{MAC}
+
+\begin{lstlisting}[language=myC++,caption={MAC Scheduler}, captionpos=b]
+  Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
+  lteHelper->SetSchedulerType ("ns3::FdMtFfMacScheduler");    // FD-MT scheduler
+  lteHelper->SetSchedulerType ("ns3::TdMtFfMacScheduler");    // TD-MT scheduler
+  lteHelper->SetSchedulerType ("ns3::TtaFfMacScheduler");     // TTA scheduler
+  lteHelper->SetSchedulerType ("ns3::FdBetFfMacScheduler");   // FD-BET scheduler
+  lteHelper->SetSchedulerType ("ns3::TdBetFfMacScheduler");   // TD-BET scheduler
+  lteHelper->SetSchedulerType ("ns3::FdTbfqFfMacScheduler");  // FD-TBFQ scheduler
+  lteHelper->SetSchedulerType ("ns3::TdTbfqFfMacScheduler");  // TD-TBFQ scheduler
+  lteHelper->SetSchedulerType ("ns3::PssFfMacScheduler");     //PSS schedulerUIntegerValue(yourvalue)); 
+\end{lstlisting}
+
+\textbf{AMC \& CQI}
+
+\begin{lstlisting}[language=myC++,caption={AMC Model}, captionpos=b]
+  // Piro
+  Config::SetDefault ("ns3::LteAmc::AmcModel", EnumValue (LteAmc::PiroEW2010));
+  // Physical error model
+  Config::SetDefault ("ns3::LteAmc::AmcModel", EnumValue (LteAmc::MiErrorModel));
+\end{lstlisting}
+
+\subsection{Building}
+
+
+\begin{lstlisting}[language=myC++,caption={Mobility Model}, captionpos=b]
+  MobilityHelper mobility;
+  mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+
+  Ptr<Building> b = CreateObject <Building> ();
+  // Box (xmin, xmax, ymin, ymax, zmin, zmax)
+  b->SetBoundaries (Box (0.0, 10.0, 0.0, 20.0, 0.0, 20.0));
+  b->SetBuildingType (Building::Residential);
+  b->SetExtWallsType (Building::ConcreteWithWindows);
+  b->SetNFloors (3);
+  b->SetNRoomsX (3);
+  b->SetNRoomsY (2);
+
+  mobility.Install (ueNodes);
+  mobility.Install (enbNodes);
+  BuildingsHelper::Install (ueNodes);
+  BuildingsHelper::Install (enbNodes);
+\end{lstlisting}
+
+\begin{lstlisting}[language=myC++,caption={Pathloss Model}, captionpos=b]
+  Ptr<HybridBuildingsPropagationLossModel> propagationLossModel = CreateObject<HybridBuildingsPropagationLossModel> ();
+  lteHelper->SetAttribute ("PathlossModel", StringValue ("ns3::HybridBuildingsPropagationLossModel"));
+  lteHelper->SetPathlossModelAttribute ("ShadowSigmaExtWalls",   DoubleValue (1));
+  lteHelper->SetPathlossModelAttribute ("ShadowSigmaOutdoor",    DoubleValue (0));
+  lteHelper->SetPathlossModelAttribute ("ShadowSigmaIndoor",     DoubleValue (0));
+\end{lstlisting}
+
+\textbf{AntennaModel \& MIMO}
+
+\begin{lstlisting}[language=myC++,caption={Antenna \& MIMO Model}, captionpos=b]
+  lteHelper->SetEnbAntennaModelType ("ns3::CosineAntennaModel");
+  lteHelper->SetEnbAntennaModelAttribute ("Orientation",          DoubleValue (0.0));
+  lteHelper->SetEnbAntennaModelAttribute ("Beamwidth",            DoubleValue (70));
+  // MaxGain in dBs
+  lteHelper->SetEnbAntennaModelAttribute ("MaxGain",              DoubleValue (0.0));
+  // Set the MIMO transmission mode
+  Config::SetDefault ("ns3::LteEnbRrc::DefaultTransmissionMode", UintegerValue (2)); // MIMO Spatial Multiplexity (2 layers)
+\end{lstlisting}
+
+\textbf{Radio Environment Maps}
+
+\begin{lstlisting}[language=myC++,caption={Radio Environment Maps helper}, captionpos=b]
+  Ptr<RadioEnvironmentMapHelper> remHelper = CreateObject<RadioEnvironmentMapHelper> ();
+  remHelper->SetAttribute ("Channel", PointerValue (lteHelper->GetDownlinkSpectrumChannel ()));
+  remHelper->SetAttribute ("OutputFile", StringValue ("rem.out"));
+  remHelper->SetAttribute ("XMin", DoubleValue (-400.0));
+  remHelper->SetAttribute ("XMax", DoubleValue (400.0));
+  remHelper->SetAttribute ("XRes", UintegerValue (100));
+  remHelper->SetAttribute ("YMin", DoubleValue (-300.0));
+  remHelper->SetAttribute ("YMax", DoubleValue (300.0));
+  remHelper->SetAttribute ("YRes", UintegerValue (75));
+  remHelper->SetAttribute ("Z", DoubleValue (0.0));
+  remHelper->SetAttribute ("UseDataChannel", BooleanValue (true));
+  remHelper->SetAttribute ("RbId", IntegerValue (10));
+  remHelper->Install ();
+\end{lstlisting}
+
+\textbf{Parameter Configuration}
+
+At the beginning of the \texttt{main} function, include:
+
+\begin{lstlisting}[language=myC++, caption={Configuration parameters}, captionpos=b]
+  Config::SetDefault ("ns3::ConfigStore::Filename", StringValue ("sim-input.txt"));
+  Config::SetDefault ("ns3::ConfigStore::Mode", StringValue ("Load"));
+  CommandLine cmd (__FILE__);
+  cmd.Parse (argc, argv);
+  ConfigStore inputConfig;
+  inputConfig.ConfigureDefaults ();
+  cmd.Parse (argc, argv);
+\end{lstlisting}
+
+Example input file
+
+\begin{lstlisting}[language=myshell, caption={Configuration parameters}, captionpos=b]
+  default ns3::LteHelper::Scheduler "ns3::PfFfMacScheduler"
+  default ns3::LteHelper::PathlossModel "ns3::FriisSpectrumPropagationLossModel"
+  default ns3::LteEnbNetDevice::DlBandwidth "25"
+  default ns3::LteEnbNetDevice::DlEarfcn "100"
+  default ns3::LteEnbNetDevice::UlEarfcn "18100"
+  default ns3::LteUePhy::TxPower "10"
+  default ns3::LteEnbPhy::TxPower "30"
+  default ns3::LteEnbRrc::SrsPeriodicity "40"
+  default ns3::TcpSocket::SndBufSize "524280"
+  default ns3::TcpSocket::RcvBufSize "524280"
+  global RngSeed "24"
+  global simTime "10.0"
+  global nRB "100"
+\end{lstlisting}
