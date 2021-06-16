@@ -222,6 +222,17 @@ The radiation pattern is express as a mathematical function ${g(\theta,\phi) \ri
   where ${A_{max}}$ is the maximum attenuation in dB of the antenna. 
 \end{itemize}
 
+\subsection{Application Module}
+The \texttt{Application} class is a base class for \textit{ns-3} applications. Nodes can
+have one or more applications. Each node maintains a list of smart pointers (references) 
+to all its applications. The \texttt{Applications} are the responsibles to create the sockets,
+if needed.
+
+There are a few implementations of \texttt{Applications} in \textit{ns-3}:
+\begin{itemize}[notopsep, itemsep=0pt]
+  \item 
+\end{itemize}
+
 \subsection{Buildings Module}
 The Buildings module provide various models, but these are the most relevant for this thesis:
 
