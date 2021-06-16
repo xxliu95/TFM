@@ -229,8 +229,13 @@ to all its applications. The \texttt{Applications} are the responsibles to creat
 if needed.
 
 There are a few implementations of \texttt{Applications} in \textit{ns-3}:
-\begin{itemize}[notopsep, itemsep=0pt]
-  \item 
+\begin{itemize}[topsep=0pt, itemsep=0pt]
+  \item \texttt{BuldSendApplication}. This traffic generator basically sends data as quickly as possible
+  until MaxBytes is reached or the application is terminated (if MaxBytes is zero)
+  \item \texttt{OnOffApplication}. After \texttt{StartApplication} is called, this traffic generator 
+  alternates between "On" and "Off" states.
+  \item \texttt{PacketSink}. This application is for receiving packets from any other applications, for
+  example, from \texttt{BulkSendApplication} or \texttt{OnOffApplication}.
 \end{itemize}
 
 \subsection{Buildings Module}
