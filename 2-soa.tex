@@ -64,14 +64,14 @@ a new international stadard called \textit{MPEG-DASH} was developed and publishe
 \section{Dynamic Adaptive Streaming over HTTP}
 \label{sec:dash}
 
-\textit{DASH} was developed from January 2009 to March 2010 and published in April 2012. 
+\textit{DASH} was published in April 2012. 
 The most recent revision of the standarization was released in 2019 as 
 \textit{MPEG-DASH ISO/IEC 23009-1:2019} \cite{ISO23009}. 
  \textit{Moving Picture Experts Group} from \textit{ISO/IEC} and the \textit{3GPP} collaborated on
 the \textit{DASH} standard. The \textit{3\textsuperscript{rd} Generation Partnership Project} defined the use of
 \textit{DASH} as the standard of digital media delivery in mobile networks (4G \textit{LTE}, 5G) in \cite{3gpp1}.
 
-The objective of \textit{DASH} was to create a unique standard that replaces the propietary solutions
+The objective of \textit{DASH} was to create a unique standard that unifies the propietary solutions
 from Microsoft, Apple and Adobe. Also, it will offer the interoperability and the convergence needed for 
 the expansion of large-scale video streaming solutions. Also, the \textit{DASH Industry Forum (DASH-IF)} was created to promote and help the expansion of
 \textit{DASH}. Microsoft, Apple, Netflix, Qualcomm, Ericsson and Samsung are some of the companies
@@ -80,13 +80,13 @@ members of the \textit{DASH-IF}.
 One of the biggest advantages of \textit{DASH} is that the video streaming is over \textit{HTTP} version 1.1 protocol
 (\textit{HTTP/1.1}). The use of \textit{HTTP} means that reusing existing internet infrastructure and
 media content distribution tecniques using \textit{CDN (Content Delivery Networks)} can be done.
-Another convenience of using \textit{DASH} is that due to using \textit{HTTP} encapsulation, problems
+Another convenience of using \textit{DASH} is, problems
 with passing through firewalls and the \textit{Network Address Translation (NAT)}
-are not existent.
+are avoided.
 
 All the control of the media content delivery is located in the \textit{DASH} client side. The
 standard does not define any web delivery mechanism nor the bitrate adaptation algorithm. What \textit{DASH}
-does define in \cite{ISO23009} are:
+does define in \cite{ISO23009} is:
 
 \begin{itemize}
   \item \textit{\textbf{The Media Presentation Description (MPD) File Format}}: The \textit{MPD} file
@@ -107,7 +107,7 @@ does define in \cite{ISO23009} are:
 \end{figure}
 
 The \autoref{fig:dasharch} presents a simple \textit{DASH} architecture. The video and audio
-content are processed and stored on an \textit{HTTP} server. To access the content, the client
+contents are processed and stored on an \textit{HTTP} server. To access the content, the client
 sends \textit{HTTP} requests to the server. But first, the client needs to download the 
 \textit{MPD} file, normally through \textit{HTTP}. The client then does the
 parsing of the \textit{MPD}, extract information such as the duration of a segment, media types or 

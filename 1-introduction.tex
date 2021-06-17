@@ -14,8 +14,8 @@ of all \textit{IP} traffic.
 
 Consequently, many challenges arise. Due to the growth in the 
 number and diversity of connected video-capable devices, and the 
-increasing bandwidth and higher quality content available, the 
-client and the server need to adapt the video content to
+increasing bandwidth and higher quality content available, the
+video client needs to adapt the multimedia content to
 the network and the devices. The technique of taking account the 
 varying network conditions and computing resources of the user 
 device to choose the adequate quality level is denominated as
@@ -24,14 +24,13 @@ monitoring different parameters such as estimated bandwidth,
 client's buffer level, CPU load or screen size.
 
 
-The \textit{Dynamic Adaptive Streaming over HTTP (DASH)} is one of the
-standards that implements adaptive bitrate video streaming and was developed
+The \textit{Dynamic Adaptive Streaming over HTTP (DASH)} is the
+standard that implements adaptive bitrate video streaming and was developed
 by the \textit{Moving Picture Experts Group (MPEG)} \cite{dash1}. \textit{MPEG-DASH} 
 enables provisioning and delivering media using existing \textit{HTTP}-delivery 
 networks supports dynamic adaptation with seamless switching. By using
 \textit{HTTP}, the player will not have firewall problems. The quality selection 
-relays on the client thus providing better scalability, and there is no need to have 
-session at the server.
+relays on the client thus providing better scalability.
 
   
 \begin{figure}[h]
@@ -46,39 +45,41 @@ The \textit{MPEG-DASH} standard was published in 2012 and revised in 2019
 by the \textit{International Organization for Standardization (ISO) / International 
 Electrotechnical Commission (IEC)} as \textit{MPEG-DASH ISO/IEC 23009-1:2019}
 \cite{ISO23009}. In addition, the \textit{3\textsuperscript{rd} Generation Partnership Project (3GPP)}
-defines the use of \textit{DASH} as the standard continuous delivering of multimedia
-content in mobile networks, specifically in 4G such as \textit{LTE} and 5G networks.
+defines the use of \textit{DASH} as the standard continuous for delivering of multimedia
+content in mobile networks, specifically in \textit{LTE} and 5G networks \cite{3gpp1}.
 
-\textit{DASH} divides the media file into small chunks or segments.
-and defines the \textit{Media Presentation Description (MPD)}, 
+\textit{DASH} splits the input stream into small chunks or segments
+which are defined in the the \textit{Media Presentation Description (MPD)}, 
 which is an XML manifest file that contains the \textit{Universal Resource 
-Locators (URL)} of the segments. Different qualities are defined as representations,
-the \textit{MPD} contains information for each representation such as the
-codec, bandwidth, resolution or framerate.
-
+Locators (URL)} of the segments. The \textit{MPD} contains information for each 
+representation such as the codec, bandwidth, resolution or framerate.
+Different qualities are defined as representations.
 
 However, the DASH Standard \cite{ISO23009} only defines the data formats
-for the media reproduction and do not provide the adaptation algorithm.
+for the media reproduction and do not provide any description on the adaptation algorithm.
+This thesis will analyze and compare a small number of adaptation algorithms.
 The \textit{DASH Industry Forum} \cite{dash2} provides an open source \textit{MPEG-DASH} 
 player implemented in \textit{JavaScript} with different adaptation algorithms.
 Similarly, \textit{hls.js} is an implementation of a \textit{HTTP Live Streaming}\footnote{HTTP
 Live Streaming is a HTTP-based adaptive bitrate streaming protocol developed by Apple Inc.
  \cite{hls1}} client.
 
-
-
 The adaptation algorithms needs to be tested in different scenarios (they can be simulated)
 and be tweaked to provide the maximum perceived quality by the users. Also, there are
 algorithms that perform better in some specific scenarios and worse in others. The adaptation
 algorithm is the responsible for avoiding problems that may have a negative impact
-on the \textit{Quality of Experience (QoE)}. One problem is that, the algorithm can overestimate
-the bandwidth and it would cause a pause in the reproduction because all the 
+on the \textit{Quality of Experience (QoE)} such as service disrruption or
+frequent changes on the bitrate. 
+One problem is that, the algorithm can overestimate
+the bandwidth, this means requesting segments of a superior quality that the channel can support,
+and it would cause a pause in the reproduction because all the 
 segments in the buffer are emptied. The algorithm can also underestimate the bandwidth,
 the video player requests media segments with inferior quality than the quality at which the 
 bandwidth available of the network can allow. Lastly, the algorithm should avoid
 constant bitrate switches result of bandwidth fluctuations, and provide a smooth and
 seamless video watching experience.
 
+This project will study and analyze the adaptation algorithms using \textit{}
 The \textit{ns-3} simulator is an open-source and extensible discrete-event network simulator. 
 The extensible nature of this tool allows us to develop a new module for \textit{ns-3}
 mimicking the behaviour of \textit{ABR} clients and servers. With this new module, \textit{ns-3} 
@@ -95,11 +96,11 @@ In order to achieve the proposed objectives, the following steps will be propose
 
 \begin{enumerate}
   \item Study and understand \textit{ns-3} and basic modules such as the core module, the
-  internet module, applications module, \textit{LENA} module among others. Build basic \textit{LTE} scenarios
+  internet module, applications module, \textit{LTE} module among others. Build basic \textit{LTE} scenarios
   tweak radio parameters, and output results.
   \item Design a new module in \text{ns-3} that simulates behaviours of \textit{ABR} clients
   and servers. Study and implement existing adaptation algorithms.
-  \item Implement objective \textit{QoE} and \textit{QoS} metrics.
+  \item Obtain objective \textit{QoE} and \textit{QoS} metrics.
   Build new \textit{LTE} scenarios and compare the performances of the implemented adaptation
   algorithms.
 \end{enumerate}
