@@ -101,7 +101,7 @@ The request is in the format:
 
 \begin{itemize}[noitemsep, topsep=0pt]
   \centering
-  \item[] \texttt{GET qualityIndex numberOfSegments startSegment}
+  \item[] \texttt{\textbf{GET qualityIndex numberOfSegments startSegment}}
 \end{itemize}
 
 For example, "\texttt{GET 4 1 3}" means "GET 1 segment of quality index 4 starting from the 
@@ -164,13 +164,21 @@ creating a MPD file parser has been considered, but it can be done in the future
 
 \subsection{AbrHelper}
 
-\texttt{AbrHelper}
+\texttt{AbrHelper} are helper classes providing the functionality of managing the ABR clients and 
+servers (creating, setting attribute, etc.). There are two classes, \texttt{AbrServerHelper}
+and \texttt{AbrClientHelper}. The \texttt{AbrClientHelper} have methods to extract QoE metrics 
+after the simulation ends.
 
 \subsection{AbrAlgorithm}
+
+\texttt{AbrAlgorithm} serves as the base class for the implementations of adaptation algorithms.
+In the next section, two implementations of \texttt{AbrAlgorithm} are presented.
 
 \section{Adaptation Algorithms}
 \label{sec:abralgo}
 
+
+\section{QoS \& QoE Metrics}
 
 /////
 
