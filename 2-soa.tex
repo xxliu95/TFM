@@ -77,8 +77,8 @@ the expansion of large-scale video streaming solutions. Also, the \textit{DASH I
 \textit{DASH}. Microsoft, Apple, Netflix, Qualcomm, Ericsson and Samsung are some of the companies
 members of the \textit{DASH-IF}.
 
-One of the biggest advantages of \textit{DASH} is that the video streaming is over \textit{HTTP} version 1.1 protocol
-(\textit{HTTP/1.1}). The use of \textit{HTTP} means that reusing existing internet infrastructure and
+One of the biggest advantages of \textit{DASH} is the use of \textit{HTTP} protocol.
+The use of \textit{HTTP} means that reusing existing internet infrastructure and
 media content distribution tecniques using \textit{CDN (Content Delivery Networks)} can be done.
 Another convenience of using \textit{DASH} is, problems
 with passing through firewalls and the \textit{Network Address Translation (NAT)}
@@ -110,13 +110,14 @@ The \autoref{fig:dasharch} presents a simple \textit{DASH} architecture. The vid
 contents are processed and stored on an \textit{HTTP} server. To access the content, the client
 sends \textit{HTTP} requests to the server. But first, the client needs to download the 
 \textit{MPD} file, normally through \textit{HTTP}. The client then does the
-parsing of the \textit{MPD}, extract information such as the duration of a segment, media types or 
+parsing of the \textit{MPD}, extract information such as the duration of a segment, 
+the available representations, media types or 
 resolutions. Finally, the \textit{DASH} client chooses the adequate quality and starts the 
 streaming of the content using \textit{HTTP GET} request to fetch the segments.
 
-The \textit{DASH} client stores the segments in a buffer and consumes the content. It continues
-to fetch new segments and by monitoring network variables it will decide which quality (higher
-or lower bitrate) to request next to avoid problems like buffer underflow and maintain at 
+The \textit{DASH} client stores the segments in a buffer and consumes the content. The adaptation
+algorithm selects the most appropiate representation, for example, basing on bandwidth estimations,
+to avoid problems like buffer underflow and maintain at 
 least a set number of segments in the buffer.
 
 \subsection{MPD}
@@ -125,8 +126,8 @@ The \textit{MPD} file is an \textit{XML} document that describes the characteris
 of the different media components that composes the media content (e.g. video, audio, subtitles).
 
 The structure of the \textit{MPD} is hierarchical as illustrated in \autoref{fig:mpd}. The media content is divided in a sequence of
-\textbf{periods}, each period has a starting time and a duration. In a period, the set of encoded
-versions of the media content is consistent, that is, the same bitrates, languages and so on.
+\textbf{periods}, where each period has a starting time and a duration. During a period, the set of characteristics
+of the media content, like the bitrates, languages or codecs, do not change.
 
 \begin{figure}[h]
   \centering
@@ -141,22 +142,22 @@ and adaptation set may contain the different bitrates of the video component of 
 and another adaptation set may contain the different bitrates of the audio component of the same multimedia
 content.
 
-An adaptation set contains a set of \textbf{representations}. A representation describe an enconded
-alternative of the same media component, the alternatives can vary by bitrate, resolution, framerates, 
-codec, sampling rate or other characteristics.
+An adaptation set contains a set of \textbf{representations}, where a representation can be defined as an enconded
+alternative of the same media component, representations are defined by parameters such as
+bitrate, resolution, framerates, codec, sampling rate or other characteristics.
 
-Each representation consists of one or multiple \textbf{segments}. A segment is the media stream chunks
-in temporal sequence. Each segment has a \textit{URI}, the client will use this \textit{URI} to make
-\textit{HTTP GET} requests to the video server. 
+Each representation consists of one or multiple \textbf{segments}. A segment is a fragment of 
+the multimedia content. Each segment is univocately identified by a \textit{URI}, the client 
+sends \textit{HTTP} requests by using the \textit{URIs} to get the segments.
 
 
 \subsection{Adaptation Algorithms}
 \label{sec:adap}
 
-In a video streaming service, there are a number of factors like the download bandwidth, delay or packet losses
-that can produced undesirable effects on the client such as buffer underflow, rebuffering and interruptions
-that lead to bad playback experience, thus, a bad Quality of Experience. To solve these problems, the ABR video
-streaming clients uses different adaptation algorithms to give a higher QoE.
+In a video streaming service, factors such as the available bandwidth, delay or packet losses
+can make the buffer to starve. Rebuffering and interruptions 
+lead to bad Quality of Experience. To solve these problems, 
+different adaptation algorithms have been proposed in the literature.
 
 An adaptation algorithm is a technique used in a multimedia streaming service to adjust the video quality
 in real-time according to different parameters. Some of the parameters are:
@@ -171,9 +172,10 @@ for this thesis in \textit{ns-3}.
 
 \subsubsection{Bandwidth throughput based algorithms}
 
-This group of algorithms uses estimations of bandwidth throughput as the main rule to select
-the qualities of the multimedia content for the client. The main difference between algorithms of
-this kind is the bandwidth estimation method and how the estimation relates to the qualities. 
+This group of algorithms uses bandwidth estimations to select
+the most adequate multimedia representation. The main difference between algorithms of
+this kind is the bandwidth estimation method and how the estimation influences
+on the representation selection. 
 
 \begin{figure}[h]
   \centering
@@ -187,11 +189,24 @@ this kind is the bandwidth estimation method and how the estimation relates to t
   
   The algorithm processes two EWMA (Exponentially Weighted Moving Averages) and chooses the minimum of the two 
   as the bandwidth estimation.
-  Then the bandwidth estimation is multiplied by a factor to reduce oscilation. And finally it selects the 
-  first quality with a bitrate less than the adjusted bandwidth estimation. 
+
+  \begin{equation}
+    B_{N} = \frac{SegmentSize_{N}}{TimeToDownload_{N}} 
+  \end{equation}
 
 
-  \item \textbf{DASH.js} \cite{dash3}. The Throughput Rule.
+  \begin{gather}
+    FastEWMA_{N} = B_{N} \times \alpha _{fast} +  FastEWMA_{N-1} \times (1 - \alpha _{fast}) \\
+    SlowEWMA_{N} = B_{N} \times \alpha _{slow} +  SlowEWMA_{N-1} \times (1 - \alpha _{slow}) \\
+    \hat{B} = min \,(FastEWMA_{N}, SlowEWMA_{N})
+  \end{gather}
+
+  Then the bandwidth estimation is multiplied by a factor to reduce oscilation. Finally it selects the 
+  representation based on the adjusted bandwidth estimation. 
+
+
+
+  \item \textbf{DASH.js} \cite{dash3}. Throughput Rule.
   
   This algorithm is basically the same as the Bandwidth estimation from HLS.js.
   It computes the average throughput, and uses an safety factor to avoid oscilations. And then chooses the quality
@@ -203,12 +218,12 @@ this kind is the bandwidth estimation method and how the estimation relates to t
 \subsubsection{Buffer based algorithms}
 
 This group of algorithms uses buffer occupancy information to try to choose the highest level of bitrate
-for the multimedia content. These algorithms are usually used to avoid buffer underflow.
+for the multimedia content.
 
 \begin{itemize}
-  \item \textbf{BOLA} \cite{bola1}. Buffer Occupancy based Lyapunov Algorithm.
+  \item \textbf{BOLA}. Buffer Occupancy based Lyapunov Algorithm.
   
-  The BOLA adaptation algorithm uses the Lyapunov optimization to make decisions. This is an utility 
+  The BOLA adaptation algorithm uses the Lyapunov optimization \cite{bola1} to make decisions. This is an utility 
   theory and it is configurable with a tradeoff parameter to choose between rebuffering potential and bitrate
   maximization.
   
@@ -224,7 +239,8 @@ for the multimedia content. These algorithms are usually used to avoid buffer un
   \begin{itemize}
     \item[$\circ$] \textbf{${V_{n}}$} is the bitrate utility.
     \item[$\circ$] \textbf{${S_{n}}$} is the playback smoothness.
-    \item[$\circ$] \textbf{${\gamma}$} is the tradeoff weight parameter.
+    \item[$\circ$] \textbf{${\gamma}$} is the tradeoff weight parameter for rebuffering potential or bitrate
+    maximization.
   \end{itemize}
 \end{itemize}
 
@@ -246,13 +262,13 @@ Experience (QoE)} is defined as \textquotedbl The degree of delight or annoyance
 
 The standard \textit{ISO/IEC 23009} defines a list of parameters for \textit{Quality of Service (QoS)} and
 \textit{Quality of Experience (QoE)} for the adaptation algorithms to base on. There parameters 
-is also used to evaluate the overall quality in the multimedia distribution service.
+are also used to evaluate the overall quality in the multimedia distribution service.
 
 Some of the metrics defined in \cite{3gpp1} and \cite{ISO23009} are as follows:
 
 \begin{itemize}
   \item \textbf{Average Throughput}: This is a \textit{QoE} metric that defines a list in which 
-  the average Throughput observed in the client during a measuring period.
+  the average throughput can be obtained that is observed in the client during a measuring period.
   \item \textbf{Initial Playout Delay}: This is a \textit{QoE} metric that represents the initial 
   delay in the reproduction of the media content.
   \item \textbf{Representation Switch Events}: This is a \textit{QoS} metric for measuring the 
@@ -281,7 +297,7 @@ introduced by the first time multimedia content with \textit{Multimedia Message 
 But it was the third generation 3G, launched in 2001, that enabled new internet-driven
 services such as video conferencing and streaming. Later in 2009, the \textit{LTE} 4G standard
 was commercially deployed. With theorical download bandwidth of almost 100Mbps made high-quality
-streaming into reality. 5G technologies improves in bandwidth even more and brings 
+streaming into reality. 5G technologies will provide an improvement in bandwidth even more and brings 
 video streaming in \textit{UHD} and more.
 
 The consumption of multimedia content on mobile networks is becoming increasingly relevant with 
@@ -314,14 +330,17 @@ The \textit{Evolved Packet System (EPS)} is constituted by the following element
   control servers, and databases linked by a \textit{IP} backbone. The main elements of the \textit{EPC}
   are:
   \begin{itemize}
-    \item[$\circ$] \textit{\textbf{Mobility Management Entity (MME)}}: The \textit{MME} is a server 
-    used for managing the signalling of the operation. 
-    \item[$\circ$] \textit{\textbf{Serving Gateway (SGW)}}: The \textit{SGW} is the gateway used for
-    communicating the access network \textit{E-UTRAN} and the \textit{PGW}.
+    \item[$\circ$] \textit{\textbf{Mobility Management Entity (MME)}}: The \textit{MME} is 
+    the main node for the control plane. It handles the signalling related to 
+    mobility and security for \textit{E-UTRAN} access.
+    \item[$\circ$] \textit{\textbf{Serving Gateway (SGW)}}: The \textit{SGW} is the gateway 
+    used for communicating the access network \textit{E-UTRAN} and the \textit{PGW}.
     \item[$\circ$] \textit{\textbf{Packet Data Network Gateway (PGW)}}: The \textit{PGW} is the gateway
-    for the traffic between the core network and external packet data networks. 
+    for the traffic between the core network and external packet data networks. It also performs
+    functions such as IP address allocation or packet filtering. 
     \item[$\circ$] \textit{\textbf{Home Subscriber Server (HSS)}}: The \textit{HSS} is a database 
-    containing information about the \textit{EPC} network users.  
+    containing information about the \textit{EPC} network users.  It also provides support 
+    functions in mobility management, call and session setup, user authentication and access authorization.
     \item[$\circ$] \textit{\textbf{Policy Charging and Rule Function (PCRF)}}: The \textit{PCRF} is used
     for \textit{QoS}, policy and charging management. 
   \end{itemize}
