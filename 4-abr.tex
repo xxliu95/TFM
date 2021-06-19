@@ -223,7 +223,7 @@ rule called \texttt{BufferRule} that will be explained after.
 
 \subsection{DASHjs.cc}
 This class is based on the implementation build by the \textit{DASH Industry Forums} with the \textit{dash.js}
-name. \texttt{DASHjs.cc} is a simplified version of \textit{dash.js}.
+name. \texttt{DASHjs.cc} is a simplified version of \textit{dash.js}. See \autoref{sec:dashjs} for more details.
 
 \textit{dash.js} works with a combination of rules. Each rule returns a \texttt{SwitchRequest}.
 A \texttt{SwitchRequest} is an object that indicates, between others, the next representation, the 
@@ -239,50 +239,61 @@ current representation.
 \begin{itemize}
   \item \textbf{\texttt{ThroughputRule}}. This is the implementation of a EWMA based adaptation
   algorithm. Is is very similar the the \textit{hls.js} Bandwidth estimation rule.
-  \item \textbf{\texttt{BolaRule}}. This is the implementation of the buffer based algorithm
-  BOLA introduced in \autoref{sec:abralgo}.
-
   
-\end{itemize}
-
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=myalgo, caption={HLSjs.cc Bandwidth Rule}, label={lst:hls},captionpos=b]
-  if (*@\textit{First Segment}@*) then
-    (*@\textit{nextQuality $\leftarrow{}$}@*)0;
-    return true;
-  end if
-  if (*@\textit{Enough segments in buffer}@*) then
-    (*@\textit{newSample $\leftarrow{}$}@*) estimation of last segment;
-    if (*@\textit{fastEWMA is 0 or slowEWMA is 0}@*) then
-      (*@\textit{fastEWMA $\leftarrow{}$ newSample}@*);
-      (*@\textit{slowEWMA $\leftarrow{}$ newSample}@*);
-    else 
-      (*@\textit{fastEWMA $\leftarrow{}$ newSample $\times \,\, \alpha_{fast} + $ fastEWMA $\times \,\, (1 - \alpha_{fast})$}@*);
-      (*@\textit{slowEWMA $\leftarrow{}$ newSample $\times \,\, \alpha_{slow} + $ slowEWMA $\times \,\, (1 - \alpha_{slow})$}@*);
-    end if
-    (*@\textit{averageBw $\leftarrow{}$$ \,\, min($slowEWMA, fastEWMA$ )$}@*);
-  else
-    (*@\textit{averageBw $\leftarrow{}$}@*) current estimation;
-  end if
-  for (*@\textit{i = representations.size - 1 \textit{$\rightarrow{}$} 0}@*) do
-    if (*@\textit{i < current quality}@*) then
-      (*@\textit{adjustedBw $\leftarrow{}$ bwFactor $\times$ averageBw}@*);
-    else 
-      (*@\textit{adjustedBw $\leftarrow{}$ bwUpFactor $\times$ averageBw}@*);
-    end if
-    if (*@\textit{adjustedBw > representations[i].bitrate}@*) then
-      (*@\textit{nextQuality $\leftarrow{}$i}@*);
+  \begin{lstlisting}[language=myalgo, caption={HLSjs.cc Bandwidth Rule}, label={lst:hls},captionpos=b]
+    if (*@\textit{First Segment}@*) then
+      (*@\textit{nextQuality $\leftarrow{}$}@*)0;
       return true;
     end if
-  end for
-  return false;
-\end{lstlisting}
-\end{minipage}
+    if (*@\textit{Enough segments in buffer}@*) then
+      (*@\textit{newSample $\leftarrow{}$}@*) estimation of last segment;
+      if (*@\textit{fastEWMA is 0 or slowEWMA is 0}@*) then
+        (*@\textit{fastEWMA $\leftarrow{}$ newSample}@*);
+        (*@\textit{slowEWMA $\leftarrow{}$ newSample}@*);
+      else 
+        (*@\textit{fastEWMA $\leftarrow{}$ newSample $\times \,\, \alpha_{fast} + $ fastEWMA $\times \,\, (1 - \alpha_{fast})$}@*);
+        (*@\textit{slowEWMA $\leftarrow{}$ newSample $\times \,\, \alpha_{slow} + $ slowEWMA $\times \,\, (1 - \alpha_{slow})$}@*);
+      end if
+      (*@\textit{averageBw $\leftarrow{}$$ \,\, min($slowEWMA, fastEWMA$ )$}@*);
+    else
+      (*@\textit{averageBw $\leftarrow{}$}@*) current estimation;
+    end if
+    for (*@\textit{i = representations.size - 1 \textit{$\rightarrow{}$} 0}@*) do
+      if (*@\textit{i < current quality}@*) then
+        (*@\textit{adjustedBw $\leftarrow{}$ bwFactor $\times$ averageBw}@*);
+      else 
+        (*@\textit{adjustedBw $\leftarrow{}$ bwUpFactor $\times$ averageBw}@*);
+      end if
+      if (*@\textit{adjustedBw > representations[i].bitrate}@*) then
+        (*@\textit{nextQuality $\leftarrow{}$i}@*);
+        return true;
+      end if
+    end for
+    return false;
+  \end{lstlisting}
+  \end{minipage}
+  
+  \item \textbf{\texttt{BolaRule}}. This is the implementation of the buffer based algorithm
+  BOLA introduced in \autoref{sec:abralgo}.
+
+  BOLA has three states:
+  \begin{itemize}[noitemsep, topsep=0pt]
+    \item[$\circ$] \texttt{BOLA\_STATE\_ONE\_BITRATE}. This is the state when there is only one bitrate available.
+    \item[$\circ$] \texttt{BOLA\_STATE\_STARTUP}. This is the initial state of BOLA.
+    \item[$\circ$] \texttt{BOLA\_STATE\_STEADY}. This is the state when the buffer is really for using BOLA.
+  \end{itemize}
+
+  The main methods of BOLA is \texttt{BolaRule} and \texttt{GetQualityFromBufferLevel}.
+  This last method uses a score calculated, using BOLA's parameters such as playback utility or 
+  playback smoothness, for each representation and chooses the representation
+  with the highest score.
+\end{itemize}
 
 \section{QoS \& QoE Metrics}
 
-/////
+
 
 

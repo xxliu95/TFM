@@ -1,4 +1,4 @@
-\chapter{ns-3 Tutorial} 
+\chapter{ns-3} 
 \label{chap:ns3tuto}
 
 \section{Getting Started}
@@ -286,4 +286,589 @@ Example input file
   global RngSeed "24"
   global simTime "10.0"
   global nRB "100"
+\end{lstlisting}
+
+\clearpage
+
+\section{DASHjs}
+\label{sec:dashjs}
+\begin{lstlisting}[language=myC++, caption={DASHjs.h}, captionpos=b]
+  #ifndef DASH_JS_H
+  #define DASH_JS_H
+  
+  #include "abr-algorithm.h"
+  #include "abr-variables.h"
+  #include "abr-client.h"
+  
+  namespace ns3 {
+  
+  constexpr int32_t NO_CHANGE = -1;
+  
+  // 0   one bitrate
+  // 1   set placeholder buffer such that we download fragments at most recently measured throughput.
+  // 2   buffer is ready for using BOLA
+  constexpr uint16_t BOLA_STATE_ONE_BITRATE = 0;
+  constexpr uint16_t BOLA_STATE_STARTUP = 1;
+  constexpr uint16_t BOLA_STATE_STEADY = 2;
+  
+  namespace PRIORITY {
+    // The priority can have these values
+    // 0.5  default priority
+    // 1    strong priority
+    // 0    weak priority
+    constexpr double DEFAULT = 0.5;
+    constexpr double STRONG = 1;
+    constexpr double WEAK = 0;
+  }
+  
+  struct BolaState {
+    uint16_t              state;
+    uint32_t              stableBufferTime;
+    uint32_t              lastQuality;
+    double                Vp;
+    double                gp;
+    std::vector<double>   utilities;
+    std::vector<double>   bitrates;
+  };
+  
+  struct SwitchRequest {
+    double    priority;
+    int32_t   quality;
+  };
+  
+  class DASHjs : public AbrAlgorithm
+  {
+  public:
+    DASHjs ();
+    DASHjs (uint32_t bufferSize);
+    /**
+    * \return the next quality
+    */
+    uint16_t GetNextQlty ();
+    /**
+    * \brief    check de DASH.js rules, similar to ABRRulesCollection.js
+    * \return   a list of tasks for the client to schedule
+    */
+    std::vector<AbrTask>  CheckRules (uint16_t     currentQlty,
+                                      uint32_t     segmentDuration,
+                                      uint32_t     segIndex,
+                                      double       currentBw,
+                                      Time         dlStartTS,
+                                      PlayerStates state,
+                                      std::vector<SegmentInfo> buffer);
+  
+    Representation GetNextRep ();
+  
+    // Auxiliary Functions
+    SwitchRequest GetMinSwitchRequest (std::vector<SwitchRequest> requests);
+    SwitchRequest CreateSwitchRequest (double priority, int32_t quality);
+    SwitchRequest CreateSwitchRequest (int32_t quality);
+  
+  private:
+    // Rule
+    SwitchRequest ThroughputRule ();
+  
+    void      UpdateAverageEwma ();
+    double    GetSafeAverageThroughput ();
+    uint32_t  GetQualityForBitrate (double bitrate);
+  
+    // Bola
+    SwitchRequest BolaRule ();
+    uint32_t      MinBufferLevelForQuality (uint32_t quality);
+    uint32_t      GetQualityFromBufferLevel ();
+    void          GetBolaState ();
+    void          GetInitialBolaState ();
+    double        GetAverageThroughput ();
+    std::vector<double>   CalculateBolaParameters (uint32_t stableBufferTime, std::vector<double> bitrates, std::vector<double> utilities);
+    std::vector<double>   UtilityFromBitrates (std::vector<double> bitrates);
+    std::vector<double>   NormalizeUtility (std::vector<double> utilities);
+  
+    // Variables
+    uint16_t m_currentQlty; // current buffer Quality
+    uint16_t m_nextQlty; // next quality to request
+    uint32_t m_segmentDuration; // segment duration in ms
+    uint32_t m_segIndex; // index of the buffer playing
+    uint32_t m_bufferSize; // maximum buffer size
+    double   m_timeWatched; // in milliseconds
+    double   m_currentBw;  // current bandwidth
+    double   m_averageBw; // estimation of average bandwidth
+    double   m_slowEWMA; // slow Exponentially Weighted Moving Average
+    double   m_fastEWMA; // fast Exponentially Weighted Moving Average
+    double   m_slowAlpha; // alpha factor for slow EWMA
+    double   m_fastAlpha; // alpha factor for fast EWMA
+    double   m_bandwidthSafetyFactor; // safety factor
+    Time     m_dlStartTS; // time stamp of one segment starting to download
+    bool     m_firstSegment; // if it is the first segment
+    PlayerStates m_state; // actual state of the player
+    std::vector <SegmentInfo> m_buffer; // buffer of the segments downloaded
+    std::vector <Representation> m_representations;
+  
+    // BOLA variables
+    BolaState m_bolaState;
+    uint32_t  m_placeHolderBuffer;
+    double    m_delay;
+  };
+  
+  } // namespace ns3
+  
+  #endif /* DASH_ALGO_H */
+\end{lstlisting}
+\begin{lstlisting}[language=myC++, caption={DASHjs.cc}, captionpos=b]
+  #include "DASHjs.h"
+  #include <math.h>
+  #include <cmath>
+  #include <limits>
+  #include <algorithm>
+  
+  namespace ns3 {
+  NS_LOG_COMPONENT_DEFINE ("DASHjs");
+  
+  NS_OBJECT_ENSURE_REGISTERED (DASHjs);
+  
+  DASHjs::DASHjs (uint32_t bufferSize)
+  {
+    m_bufferSize = bufferSize;
+    m_averageBw = 0.0;
+    m_slowEWMA = 0.0;
+    m_fastEWMA = 0.0;
+    m_slowAlpha = 0.1;
+    m_fastAlpha = 0.5;
+    m_bandwidthSafetyFactor = 0.7;
+    m_firstSegment = true;
+  
+    m_bolaState.state = -1;
+    m_placeHolderBuffer = 0;
+    m_delay = 0.0;
+  
+    m_representations = AbrVariables::GetRepresentations ();
+  }
+  
+  uint16_t
+  DASHjs::GetNextQlty ()
+  {
+    return m_nextQlty;
+  }
+  
+  std::vector<AbrTask>
+  DASHjs::CheckRules (uint16_t     currentQlty,
+                      uint32_t     segmentDuration,
+                      uint32_t     segIndex,
+                      double       currentBw,
+                      Time         dlStartTS,
+                      PlayerStates state,
+                      std::vector<SegmentInfo> buffer)
+  {
+  
+    NS_LOG_FUNCTION (this);
+    m_currentQlty = currentQlty;
+    m_segmentDuration = segmentDuration;
+    m_segIndex = segIndex;
+    m_dlStartTS = dlStartTS;
+    m_currentBw = currentBw;
+    m_buffer = buffer;
+    m_state = state;
+  
+    std::vector<SwitchRequest> requests;
+    std::vector<AbrTask> tasks;
+    requests.push_back (ThroughputRule ());
+    requests.push_back (BolaRule ());
+  
+    SwitchRequest request = GetMinSwitchRequest (requests);
+    if (request.quality != NO_CHANGE) {
+      m_nextQlty = request.quality;
+  
+      NS_LOG_INFO ("Change Quality to " << AbrVariables::GetQuality (m_nextQlty));
+  
+      tasks.push_back (AbrVariables::CreateTask (Seconds (m_delay), AbrTask::GetNextRep));
+      tasks.push_back (AbrVariables::CreateTask (Seconds (m_delay + 0.0001), AbrTask::SendRequest));
+  
+      m_delay = 0.0;
+    }
+  
+    return tasks;
+  }
+  
+  SwitchRequest
+  DASHjs::ThroughputRule ()
+  {
+    SwitchRequest switchRequest = CreateSwitchRequest (NO_CHANGE);
+  
+    if (m_firstSegment && m_segIndex == 0)
+    {
+      NS_LOG_INFO ("First Segment");
+      m_firstSegment = false;
+      switchRequest.quality = 0;
+      return switchRequest;
+    }
+  
+    UpdateAverageEwma ();
+  
+    double average = GetSafeAverageThroughput ();
+  
+    switchRequest.quality = GetQualityForBitrate (average);
+  
+    return switchRequest;
+  }
+  
+  SwitchRequest
+  DASHjs::BolaRule ()
+  {
+    SwitchRequest switchRequest = CreateSwitchRequest (NO_CHANGE);
+  
+    GetBolaState ();
+  
+    if (m_bolaState.state == BOLA_STATE_ONE_BITRATE) {
+      NS_LOG_INFO ("BOLA_STATE_ONE_BITRATE");
+      switchRequest.quality = NO_CHANGE;
+      return switchRequest;
+    }
+  
+    // First segment
+    if (m_firstSegment && m_segIndex == 0)
+    {
+      NS_LOG_INFO ("First Segment");
+      m_firstSegment = false;
+      switchRequest.quality = 0;
+      return switchRequest;
+    }
+  
+    uint32_t quality = 0;
+    uint32_t bufferLevel = (m_buffer.size () - m_segIndex) * m_segmentDuration;
+    uint32_t qualityForThroughput = 0;
+    switchRequest.quality = 0;
+  
+    UpdateAverageEwma ();
+  
+    double safeThroughput = GetSafeAverageThroughput ();
+  
+    switch (m_bolaState.state) {
+      case BOLA_STATE_STARTUP:
+        NS_LOG_INFO ("BOLA_STATE_STARTUP");
+        quality = GetQualityForBitrate(safeThroughput);
+  
+        switchRequest.quality = quality;
+  
+        m_bolaState.lastQuality = quality;
+  
+        if (bufferLevel >= 1)
+        {
+          m_bolaState.state = BOLA_STATE_STEADY;
+        }
+  
+        break;
+  
+      case BOLA_STATE_STEADY:
+        NS_LOG_INFO ("BOLA_STATE_STEADY");
+  
+        quality = GetQualityFromBufferLevel ();
+  
+        // BOLA-O variant
+        qualityForThroughput = GetQualityForBitrate (safeThroughput);
+        if (quality > m_bolaState.lastQuality && quality > qualityForThroughput)
+        {
+          // to avoid oscillations
+          quality = std::max (qualityForThroughput, m_bolaState.lastQuality);
+        }
+
+        switchRequest.quality = quality;
+        m_bolaState.lastQuality = quality;
+  
+        break;
+  
+      default:
+        NS_LOG_INFO ("BOLA ABR Rule Bad State");
+        quality = GetQualityForBitrate(safeThroughput);
+        m_bolaState.state = BOLA_STATE_STARTUP;
+  
+        break;
+    }
+  
+  
+    return switchRequest;
+  }
+  
+  void
+  DASHjs::GetBolaState ()
+  {
+    if (m_bolaState.state > 2)
+    {
+      GetInitialBolaState ();
+    }
+  }
+  
+  void
+  DASHjs::GetInitialBolaState ()
+  {
+    NS_LOG_INFO ("Initial BOLA state");
+    std::vector<double> bitrates;
+    bitrates = AbrVariables::GetBitratesInKbps ();
+  
+    std::vector<double> utilities = UtilityFromBitrates (bitrates);
+    std::vector<double> normalizedUtilities = NormalizeUtility (utilities);
+    uint32_t stableBufferTime = 12; // DEFAULT\_MIN\_BUFFER\_TIME;
+    // uint32\_t stableBufferTime = 20; // DEFAULT\_MIN\_BUFFER\_TIME\_FAST\_SWITCH;
+    std::vector<double> params = CalculateBolaParameters (stableBufferTime, bitrates, normalizedUtilities);
+  
+    if (params.size () <= 0)
+    {
+      m_bolaState.state = BOLA_STATE_ONE_BITRATE;
+    }
+    else
+    {
+      m_bolaState.state = BOLA_STATE_STARTUP;
+  
+      m_bolaState.bitrates = bitrates;
+      m_bolaState.utilities = normalizedUtilities;
+      m_bolaState.stableBufferTime = stableBufferTime;
+      m_bolaState.Vp = params[0];
+      m_bolaState.gp = params[1];
+  
+      m_bolaState.lastQuality = 0;
+    }
+  }
+  
+  std::vector<double>
+  DASHjs::NormalizeUtility (std::vector<double> utilities)
+  {
+    std::vector<double> normalized;;
+    double offset = -utilities[0];
+    for (std::vector<double>::iterator it = utilities.begin();
+         it != utilities.end(); ++it) {
+  
+      double n = *it + offset;
+      normalized.push_back (n);
+      NS_LOG_INFO (n);
+    }
+    return normalized;
+  }
+  
+  std::vector<double>
+  DASHjs::UtilityFromBitrates (std::vector<double> bitrates)
+  {
+    std::vector<double> utilities;
+    for (std::vector<double>::iterator it = bitrates.begin();
+         it != bitrates.end(); ++it) {
+      double u = log(*it);
+      utilities.push_back (u);
+      NS_LOG_INFO (this << " " << log(*it));
+    }
+    return utilities;
+  }
+  
+  std::vector<double>
+  DASHjs::CalculateBolaParameters (uint32_t stableBufferTime, std::vector<double> bitrates, std::vector<double> utilities)
+  {
+    std::vector<double> params;
+  
+    const uint32_t MINIMUM_BUFFER_S = 10000;
+    const uint32_t MINIMUM_BUFFER_PER_BITRATE_LEVEL_S = 2000;
+    uint32_t nBitrates = bitrates.size ();
+    uint32_t bufferTime = std::max (stableBufferTime,
+      MINIMUM_BUFFER_S + MINIMUM_BUFFER_PER_BITRATE_LEVEL_S * nBitrates);
+  
+    double gp = (utilities.back () - 1) / (bufferTime / MINIMUM_BUFFER_S - 1);
+    double Vp = MINIMUM_BUFFER_S / gp;
+    NS_LOG_INFO ("gp: " <<gp << " u: " << utilities.back() <<" buf: "<< bufferTime);
+  
+    params.insert (params.begin (), Vp);
+    params.insert (params.begin () + 1, gp);
+  
+    return params;
+  }
+  
+  uint32_t
+  DASHjs::MinBufferLevelForQuality (uint32_t quality)
+  {
+    uint32_t qBitrate = m_bolaState.bitrates[quality];
+    uint32_t qUtility = m_bolaState.utilities[quality];
+  
+    uint32_t min = 0;
+  
+    for (uint16_t i = quality - 1; i > 0; --i)
+    {
+      NS_LOG_INFO (i);
+      if (m_bolaState.utilities[i] < m_bolaState.utilities[quality])
+      {
+        uint32_t iBitrate = m_bolaState.bitrates[i];
+        uint32_t iUtility = m_bolaState.utilities[i];
+  
+        uint32_t level = m_bolaState.Vp * (m_bolaState.gp + (qBitrate * iUtility - iBitrate * qUtility) / (qBitrate - iBitrate));
+        min = std::max (min, level);
+      }
+    }
+    return min;
+  }
+  
+  // Main function
+  uint32_t
+  DASHjs::GetQualityFromBufferLevel ()
+  {
+    uint32_t bitrateCount = m_bolaState.bitrates.size ();
+    uint32_t quality = 0;
+    uint32_t bufferLevel = (m_buffer.size () - m_segIndex) * m_segmentDuration;
+    double score = NAN;
+    for (uint16_t i = 0; i < bitrateCount; ++i)
+    {
+      double s = (m_bolaState.Vp * (m_bolaState.utilities[i] + m_bolaState.gp)
+      - bufferLevel) / (m_bolaState.bitrates[i]);
+      if (std::isnan(score) || s > score)
+      {
+        NS_LOG_INFO ("s: " << s << " Vp: "<< m_bolaState.Vp << " u: "
+        << m_bolaState.utilities[i]
+        << " gp: " << m_bolaState.gp << " level: " << bufferLevel
+        << " bitrate: " << m_bolaState.bitrates[i]);
+        score = s;
+        quality = i;
+      }
+    }
+    NS_LOG_INFO (quality << " " << AbrVariables::GetQuality(quality) << " "
+    << m_representations[quality].bitrate << "Buffer Level: " << bufferLevel);
+    return quality;
+  }
+  
+  double
+  DASHjs::GetAverageThroughput ()
+  {
+    return m_averageBw;
+  }
+
+  SwitchRequest
+  DASHjs::GetMinSwitchRequest (std::vector<SwitchRequest> requests)
+  {
+    SwitchRequest newSwitchReq = CreateSwitchRequest (NO_CHANGE);
+    int32_t newQuality = -1;
+    std::map<double, int32_t> values;
+  
+    if (requests.size() == 0)
+    {
+      return newSwitchReq;
+    }
+    else if (requests.size() == 1)
+    {
+      return requests.back ();
+    }
+  
+    values.insert (std::pair<double, int32_t>(PRIORITY::STRONG, NO_CHANGE));
+    values.insert (std::pair<double, int32_t>(PRIORITY::WEAK, NO_CHANGE));
+    values.insert (std::pair<double, int32_t>(PRIORITY::DEFAULT, NO_CHANGE));
+  
+    for (std::vector<SwitchRequest>::iterator it = requests.begin ();
+         it != requests.end (); ++it) {
+      SwitchRequest req = *it;
+      if (req.quality != NO_CHANGE) {
+        if (values.at (req.priority) == NO_CHANGE ||
+            values.at (req.priority) > req.quality) {
+          NS_LOG_INFO (req.quality);
+          values.at (req.priority) = req.quality;
+        }
+      }
+    }
+  
+    if (values.at (PRIORITY::WEAK) != NO_CHANGE) {
+      newQuality = values.at (PRIORITY::WEAK);
+    }
+  
+    if (values.at (PRIORITY::DEFAULT) != NO_CHANGE) {
+      newQuality = values.at (PRIORITY::DEFAULT);
+    }
+  
+    if (values.at (PRIORITY::STRONG) != NO_CHANGE) {
+      newQuality = values.at (PRIORITY::STRONG);
+    }
+  
+    if (newQuality > -1) {
+      // the returned is always DEFAULT since we do not have more requests
+      newSwitchReq = CreateSwitchRequest (newQuality);
+      NS_LOG_INFO (newQuality);
+      NS_LOG_INFO ("SwitchRequest to quality" << AbrVariables::GetQuality (m_nextQlty));
+    }
+  
+    return newSwitchReq;
+  }
+  
+  SwitchRequest
+  DASHjs::CreateSwitchRequest (double priority, int32_t quality) {
+    SwitchRequest req;
+    if (priority != 0 || priority != 0.5 || priority != 1) {
+       // priority by default
+       std::cout << priority << std::endl;
+       req.priority = PRIORITY::DEFAULT;
+     } else {
+       req.priority = priority;
+     }
+    req.priority = priority;
+    req.quality = quality;
+    NS\_LOG\_INFO (req.priority << " " << req.quality);
+    return req;
+  }
+  
+  SwitchRequest
+  DASHjs::CreateSwitchRequest (int32_t quality) {
+    SwitchRequest req;
+    req.priority = PRIORITY::DEFAULT;
+    req.quality = quality;
+    NS_LOG_INFO (req.priority << " " << req.quality);
+    return req;
+  }
+  
+  
+  uint32_t
+  DASHjs::GetQualityForBitrate (double bitrate)
+  {
+    Representation rep;
+    if (m_representations.size () < 2) return 0;
+  
+    for (uint16_t j=m_representations.size () - 1; j>0; j--)
+    {
+      rep = m_representations[j];
+      // bitrates are in bps
+      if (bitrate > rep.bitrate) {
+        NS_LOG_INFO (j << " " << AbrVariables::GetQuality(j) << " " << m_representations[j].bitrate << " " << bitrate);
+        return j;
+      }
+    }
+    return 0;
+  }
+  
+  void
+  DASHjs::UpdateAverageEwma ()
+  {
+    double newSample = 0;
+    if (m_buffer.size () != 0)
+    {
+      newSample = m_buffer.back ().dlBandwidth;
+    }
+  
+    if (m_fastEWMA == 0 || m_slowEWMA == 0)
+    {
+      m_fastEWMA = newSample;
+      m_slowEWMA = newSample;
+    }
+    else
+    {
+      m_fastEWMA = newSample * m_fastAlpha + m_fastEWMA * (1 - m_fastAlpha);
+      m_slowEWMA = newSample * m_slowAlpha + m_slowEWMA * (1 - m_slowAlpha);
+    }
+    m_averageBw = std::min (m_slowEWMA, m_fastEWMA);
+  }
+  
+  double
+  DASHjs::GetSafeAverageThroughput ()
+  {
+    double average = m_averageBw;
+    if (average != 0) {
+      average *= m_bandwidthSafetyFactor;
+    }
+    return average;
+  }
+  
+  Representation
+  DASHjs::GetNextRep ()
+  {
+    Representation rep = AbrVariables::GetRep (m_currentQlty);
+    return rep;
+  }
+  
+  } // namespace ns3
+  
 \end{lstlisting}

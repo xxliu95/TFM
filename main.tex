@@ -126,7 +126,9 @@
     BuildingsHelper, Building, CommandLine, ConfigStore, LteEnbRrc, RadioEnvironmentMapHelper, DoubleValue,
     UintegerValue, BooleanValue, StringValue, PointerValue, IntegerValue,
     ConstantPositionMobilityModel, Node, Config, EnumValue, Box, LteAmc,
-    MyClass, Socket, TcpSocketFactory, PointToPointHelper},
+    MyClass, Socket, TcpSocketFactory, PointToPointHelper, uint16_t, uint32_t, double,
+    vector, int32_t, DASHjs, AbrAlgorithm, AbrTask, Time, PlayerStates, SwitchRequest, BolaState, SegmentInfo,
+    Representation, AbrVariables, iterator, pair},
     morekeywords=[2]{EnableAsciiAll, CreateFileStream, EnablePcapAll, CreateObject, Create,
     SetMobilityModel, Install, InstallEnbDevice, InstallUeDevice, Attach, EnableMacTraces,
     EnablePdcpTraces, SetSchedulerType, SetSchedulerAttribute, EnableRlcTraces, EnablePhyTraces, 
@@ -134,10 +136,18 @@
     SetExtWallsType, SetNFloors, SetNRoomsX, SetNRoomsY, SetAttribute, SetPathlossModelAttribute,
     SetEnbAntennaModelAttribute, SetEnbAntennaModelType, Get, Parse, ConfigureDefaults,
     Bind, Connect, Send, Recv, Close, MakeCallback, HandleRead, HandleSend, SetConnectCallback,
-    SetSendCallback, SetRecvCallback, GetTypeId, ConnectionSucceeded, ConnectionFailed,
-    SetDeviceAttribute, SetChannelAttribute},
-    morekeywords=[3]{Ptr, this},
-    comment=[l]{//}
+    SetSendCallback, SetRecvCallback, GetTypeId, ConnectionSucceeded, ConnectionFailed, CalculateBolaParameters,
+    UtilityFromBitrates, NormalizeUtility, GetRepresentations,GetNextQlty, UpdateAverageEwma, push_back,
+    GetQuality, CreateTask, max, NS_LOG_INFO, NS_LOG_FUNCTION, NS_LOG_COMPONENT_DEFINE, NS_OBJECT_ENSURE_REGISTERED,
+    size, GetBitratesInKbps, end, begin,  back, insert,
+    SetDeviceAttribute, SetChannelAttribute, CheckRules, GetNextRep, GetMinSwitchRequest, CreateSwitchRequest,
+    ThroughputRule, BolaRule, GetSafeAverageThroughput, GetQualityForBitrate, GetQualityFromBufferLevel,
+    MinBufferLevelForQuality, GetBolaState, GetInitialBolaState, GetAverageThroughput},
+    morekeywords=[3]{Ptr, this, include, ifndef, define, \#, namespace, constexpr, struct,
+    std, class, public, private, void, endif, true, false, return, if, for, else, switch, case, break,
+    default,},
+    comment=[l]{//},
+    morecomment=[s]{/**}{*/}
 }
 
 \lstdefinelanguage{myalgo}{
@@ -145,7 +155,8 @@
     % basicstyle=\rmfamily\itshape,
     morekeywords=[4]{if, then, else, end, for, do, return, while},
     morekeywords=[5]{},
-    morecomment=[l]{\#}
+    morecomment=[l]{\#},
+    morecomment=[s]{/**}{*/},
 }
 
 % \usepackage{xcolor}
