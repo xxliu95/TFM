@@ -78,6 +78,7 @@
     keywordstyle=[2]\color{mypurple},    
     keywordstyle=[3]\color{myred},    
     keywordstyle=[4]\textbf,   
+    keywordstyle=[5]\textit,   
     % stringstyle=\color{white}\ttfamily, 
     showspaces=false,          
     showtabs=false,             
@@ -137,6 +138,14 @@
     SetDeviceAttribute, SetChannelAttribute},
     morekeywords=[3]{Ptr, this},
     comment=[l]{//}
+}
+
+\lstdefinelanguage{myalgo}{
+    % basicstyle=\footnotesize\ttfamily,
+    % basicstyle=\rmfamily\itshape,
+    morekeywords=[4]{if, then, else, end, for, do, return, while},
+    morekeywords=[5]{},
+    morecomment=[l]{\#}
 }
 
 % \usepackage{xcolor}
@@ -227,6 +236,8 @@
 \usepackage{listings}
 
 \definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\usepackage[]{algorithm2e}
+\usepackage{algorithmic}
 
 
 % Allows to change the color of chapter headers

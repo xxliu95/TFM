@@ -177,10 +177,109 @@ In the next section, two implementations of \texttt{AbrAlgorithm} are presented.
 \section{Adaptation Algorithms}
 \label{sec:abralgo}
 
+This section will present two implementation of \texttt{AbrAlgorithm}. The first one
+is based on the JavaScript library implementation of \textit{HTTP Live Streaming (HLS) hls.js}\footnote{\textit{hls.js} will refer to the original JavaScript Library while
+\texttt{HLSjs.cc} will refer to the \textit{ns-3} implementation} client \cite{hls3}.
+The second implementation is based on the \textit{dash.js} 
+\footnote{\textit{dash.js} will refer to the original DASH implementation while
+\texttt{DASHjs.cc} will refer to the \textit{ns-3} implementation}
+from the \textit{DASH Industry Forum} \cite{dash3}.
+
+\subsection{HLSjs.cc}
+This class is based on the implementation from a open-source JavaScript-based project called
+\textit{hls.js}.
+The \texttt{HLSjs.cc} class has some simplifications compared to the original
+library.
+
+\textit{hls.js} has two main rules and some aditional secondary rules. These rules are:
+\begin{itemize}[noitemsep, topsep=0pt]
+  \item Main Rules
+  \begin{itemize}[noitemsep, topsep=0pt]
+    \item \textbf{Bandwidth Estimation}. This is the main rule, which is an ABR adaptation
+    algorithm rule explained in the \autoref{sec:adap}.
+    \item \textbf{Abort Rules}. These are a set of rules to abort a segment download depending on
+    some coditions, for example, a timeout for a segment to download.
+  \end{itemize}
+  \item Secondary Rules
+  \begin{itemize}[noitemsep, topsep=0pt]
+    \item \textbf{Screen \& player size cap level}. This rule is used at the beginning to cap the highest
+    level of representation to the device capabilities. For instance, there is no need for a FHD
+    device to play 4K videos in most cases.
+    \item \textbf{Dropped frames per second}. This rule is triggered if the cpu cannot handle the 
+    decoding of the multimedia content and produces too much dropped frames.
+  \end{itemize}
+\end{itemize}
+
+\texttt{HLSjs.cc} will focus only on the Bandwidth Estimation rule. In addition, there is another 
+rule called \texttt{BufferRule} that will be explained after.
+\lstset{escapeinside={(*@}{@*)}}
+
+\begin{itemize}
+  \item \textbf{\texttt{BandwidthRule}}. This is the implementation of a EWMA based adaptation
+  algorithm. The \autoref{lst:hls} show a pseudocode of the algorithm.
+  \item \textbf{\texttt{BufferRule}}. This rule introduces a delay to the client
+  next request based on the buffer status.
+\end{itemize}
+
+\subsection{DASHjs.cc}
+This class is based on the implementation build by the \textit{DASH Industry Forums} with the \textit{dash.js}
+name. \texttt{DASHjs.cc} is a simplified version of \textit{dash.js}.
+
+\textit{dash.js} works with a combination of rules. Each rule returns a \texttt{SwitchRequest}.
+A \texttt{SwitchRequest} is an object that indicates, between others, the next representation, the 
+request priority, etc. The priorities of the \texttt{SwitchRequest} can be \texttt{NO\_CHANGE}, 
+\texttt{DEFAULT}, \texttt{STRONG} or \texttt{WEAK}.
+
+If more than one \texttt{SwitchRequest} is created, the \texttt{GetMinSwitchRequest} is called.
+It always considers the request with the highest priority and the quality with the minimum difference compared to the
+current representation.
+
+\texttt{DASHjs.cc} has two rules implemented:
+
+\begin{itemize}
+  \item \textbf{\texttt{ThroughputRule}}. This is the implementation of a EWMA based adaptation
+  algorithm. Is is very similar the the \textit{hls.js} Bandwidth estimation rule.
+  \item \textbf{\texttt{BolaRule}}. This is the implementation of the buffer based algorithm
+  BOLA introduced in \autoref{sec:abralgo}.
+
+  
+\end{itemize}
 
 
+\begin{minipage}{\linewidth}
 
-
+\begin{lstlisting}[language=myalgo, caption={HLSjs.cc Bandwidth Rule}, label={lst:hls},captionpos=b]
+  if (*@\textit{First Segment}@*) then
+    (*@\textit{nextQuality $\leftarrow{}$}@*)0;
+    return true;
+  end if
+  if (*@\textit{Enough segments in buffer}@*) then
+    (*@\textit{newSample $\leftarrow{}$}@*) estimation of last segment;
+    if (*@\textit{fastEWMA is 0 or slowEWMA is 0}@*) then
+      (*@\textit{fastEWMA $\leftarrow{}$ newSample}@*);
+      (*@\textit{slowEWMA $\leftarrow{}$ newSample}@*);
+    else 
+      (*@\textit{fastEWMA $\leftarrow{}$ newSample $\times \,\, \alpha_{fast} + $ fastEWMA $\times \,\, (1 - \alpha_{fast})$}@*);
+      (*@\textit{slowEWMA $\leftarrow{}$ newSample $\times \,\, \alpha_{slow} + $ slowEWMA $\times \,\, (1 - \alpha_{slow})$}@*);
+    end if
+    (*@\textit{averageBw $\leftarrow{}$$ \,\, min($slowEWMA, fastEWMA$ )$}@*);
+  else
+    (*@\textit{averageBw $\leftarrow{}$}@*) current estimation;
+  end if
+  for (*@\textit{i = representations.size - 1 \textit{$\rightarrow{}$} 0}@*) do
+    if (*@\textit{i < current quality}@*) then
+      (*@\textit{adjustedBw $\leftarrow{}$ bwFactor $\times$ averageBw}@*);
+    else 
+      (*@\textit{adjustedBw $\leftarrow{}$ bwUpFactor $\times$ averageBw}@*);
+    end if
+    if (*@\textit{adjustedBw > representations[i].bitrate}@*) then
+      (*@\textit{nextQuality $\leftarrow{}$i}@*);
+      return true;
+    end if
+  end for
+  return false;
+\end{lstlisting}
+\end{minipage}
 
 \section{QoS \& QoE Metrics}
 
