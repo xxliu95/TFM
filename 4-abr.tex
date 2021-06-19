@@ -195,17 +195,17 @@ library.
 \begin{itemize}[noitemsep, topsep=0pt]
   \item Main Rules
   \begin{itemize}[noitemsep, topsep=0pt]
-    \item \textbf{Bandwidth Estimation}. This is the main rule, which is an ABR adaptation
+    \item[$\circ$] \textbf{Bandwidth Estimation}. This is the main rule, which is an ABR adaptation
     algorithm rule explained in the \autoref{sec:adap}.
-    \item \textbf{Abort Rules}. These are a set of rules to abort a segment download depending on
+    \item[$\circ$] \textbf{Abort Rules}. These are a set of rules to abort a segment download depending on
     some coditions, for example, a timeout for a segment to download.
   \end{itemize}
   \item Secondary Rules
   \begin{itemize}[noitemsep, topsep=0pt]
-    \item \textbf{Screen \& player size cap level}. This rule is used at the beginning to cap the highest
+    \item[$\circ$] \textbf{Screen \& player size cap level}. This rule is used at the beginning to cap the highest
     level of representation to the device capabilities. For instance, there is no need for a FHD
     device to play 4K videos in most cases.
-    \item \textbf{Dropped frames per second}. This rule is triggered if the cpu cannot handle the 
+    \item[$\circ$] \textbf{Dropped frames per second}. This rule is triggered if the cpu cannot handle the 
     decoding of the multimedia content and produces too much dropped frames.
   \end{itemize}
 \end{itemize}
@@ -292,7 +292,6 @@ current representation.
   with the highest score.
 \end{itemize}
 
-\section{QoS \& QoE Metrics}
 
 
 
