@@ -301,9 +301,7 @@ Example input file
   #include "abr-client.h"
   
   namespace ns3 {
-  
-  constexpr int32_t NO_CHANGE = -1;
-  
+    
   // 0   one bitrate
   // 1   set placeholder buffer such that we download fragments at most recently measured throughput.
   // 2   buffer is ready for using BOLA
@@ -311,6 +309,8 @@ Example input file
   constexpr uint16_t BOLA_STATE_STARTUP = 1;
   constexpr uint16_t BOLA_STATE_STEADY = 2;
   
+  constexpr int32_t NO_CHANGE = -1;
+
   namespace PRIORITY {
     // The priority can have these values
     // 0.5  default priority
@@ -372,7 +372,7 @@ Example input file
     double    GetSafeAverageThroughput ();
     uint32_t  GetQualityForBitrate (double bitrate);
   
-    // Bola
+    // BOLA
     SwitchRequest BolaRule ();
     uint32_t      MinBufferLevelForQuality (uint32_t quality);
     uint32_t      GetQualityFromBufferLevel ();
@@ -413,6 +413,7 @@ Example input file
   
   #endif /* DASH_ALGO_H */
 \end{lstlisting}
+
 \begin{lstlisting}[language=myC++, caption={DASHjs.cc}, captionpos=b]
   #include "DASHjs.h"
   #include <math.h>
@@ -435,11 +436,9 @@ Example input file
     m_fastAlpha = 0.5;
     m_bandwidthSafetyFactor = 0.7;
     m_firstSegment = true;
-  
     m_bolaState.state = -1;
     m_placeHolderBuffer = 0;
     m_delay = 0.0;
-  
     m_representations = AbrVariables::GetRepresentations ();
   }
   
@@ -458,7 +457,6 @@ Example input file
                       PlayerStates state,
                       std::vector<SegmentInfo> buffer)
   {
-  
     NS_LOG_FUNCTION (this);
     m_currentQlty = currentQlty;
     m_segmentDuration = segmentDuration;
@@ -484,7 +482,6 @@ Example input file
   
       m_delay = 0.0;
     }
-  
     return tasks;
   }
   
@@ -492,7 +489,6 @@ Example input file
   DASHjs::ThroughputRule ()
   {
     SwitchRequest switchRequest = CreateSwitchRequest (NO_CHANGE);
-  
     if (m_firstSegment && m_segIndex == 0)
     {
       NS_LOG_INFO ("First Segment");
@@ -500,13 +496,9 @@ Example input file
       switchRequest.quality = 0;
       return switchRequest;
     }
-  
     UpdateAverageEwma ();
-  
     double average = GetSafeAverageThroughput ();
-  
     switchRequest.quality = GetQualityForBitrate (average);
-  
     return switchRequest;
   }
   
@@ -514,9 +506,7 @@ Example input file
   DASHjs::BolaRule ()
   {
     SwitchRequest switchRequest = CreateSwitchRequest (NO_CHANGE);
-  
     GetBolaState ();
-  
     if (m_bolaState.state == BOLA_STATE_ONE_BITRATE) {
       NS_LOG_INFO ("BOLA_STATE_ONE_BITRATE");
       switchRequest.quality = NO_CHANGE;
@@ -536,9 +526,8 @@ Example input file
     uint32_t bufferLevel = (m_buffer.size () - m_segIndex) * m_segmentDuration;
     uint32_t qualityForThroughput = 0;
     switchRequest.quality = 0;
-  
+
     UpdateAverageEwma ();
-  
     double safeThroughput = GetSafeAverageThroughput ();
   
     switch (m_bolaState.state) {
@@ -547,14 +536,13 @@ Example input file
         quality = GetQualityForBitrate(safeThroughput);
   
         switchRequest.quality = quality;
-  
         m_bolaState.lastQuality = quality;
-  
+
         if (bufferLevel >= 1)
         {
           m_bolaState.state = BOLA_STATE_STEADY;
         }
-  
+
         break;
   
       case BOLA_STATE_STEADY:
@@ -572,7 +560,7 @@ Example input file
 
         switchRequest.quality = quality;
         m_bolaState.lastQuality = quality;
-  
+
         break;
   
       default:
@@ -582,8 +570,6 @@ Example input file
   
         break;
     }
-  
-  
     return switchRequest;
   }
   
@@ -672,7 +658,6 @@ Example input file
   
     params.insert (params.begin (), Vp);
     params.insert (params.begin () + 1, gp);
-  
     return params;
   }
   
@@ -777,7 +762,6 @@ Example input file
     }
   
     if (newQuality > -1) {
-      // the returned is always DEFAULT since we do not have more requests
       newSwitchReq = CreateSwitchRequest (newQuality);
       NS_LOG_INFO (newQuality);
       NS_LOG_INFO ("SwitchRequest to quality" << AbrVariables::GetQuality (m_nextQlty));
@@ -810,7 +794,6 @@ Example input file
     NS_LOG_INFO (req.priority << " " << req.quality);
     return req;
   }
-  
   
   uint32_t
   DASHjs::GetQualityForBitrate (double bitrate)
