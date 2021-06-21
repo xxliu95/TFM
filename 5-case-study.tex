@@ -81,19 +81,13 @@ the simulation time and never played segments from the lowest quality.
 
 \subsection{Scenario 2}
 
-\subsubsection{Scenario 2.1}
+This scenario will find out what will happen if an \textit{UE} stands still, or if it is moving away
+or towards the \textit{eNodeB}.
 
-Standing still
-
-\subsubsection{Scenario 2.2}
-
-Moving away
-
-50 moving 20m/s
-
-\subsubsection{Scenario 2.3}
-
-Moving towards
+This setup will be using only the \textit{HLS} algorithm. In the first simulation, the \textit{UE}
+will be placed at a reasonable distance from the \textit{eNodeB}. In the second one, the \textit{UE}
+is moving with a constant velocity away from the \textit{eNodeB}. Finally, the \textit{UE} is placed 
+a little bit further and walks towards the \textit{eNodeB}.
 
 \begin{figure}[h]
     \centering
@@ -102,13 +96,20 @@ Moving towards
     \label{fig:s2c1}
 \end{figure}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{img/s2c2_1.pdf}
-\end{figure}
+The \autoref{fig:s2c1} shows the buffer status as a function of time. What moving away from 
+the \textit{eNodeB} really does is to decrease the available bandwidth and finally the \textit{UE}
+will be unable to request a new segment. 
+
+Within the wireshark statistics tools, by selecting the throughput option within \textit{TCP} flows, 
+it is possible to display throughput graphs of the \textit{UEs}. In the \autoref{fig:s2c2}, the first
+graph show that the \textit{UE} approaching the \textit{eNodeB} performs relatively well. By contrast,
+the throughput of the second \textit{UE} drops significantly every time it goes further from the \textit{eNodeB}.
+All these behaviours are reflected in the \autoref{table:s2t1} with some \textit{QoE} metrics.
 
 \begin{figure}[h]
     \centering    
+    \includegraphics[width=\textwidth]{img/s2c2_1.pdf}
+    \includegraphics[width=\textwidth]{img/space.png}
     \includegraphics[width=\textwidth]{img/s2c2_2.pdf}
     \caption{Scenario 2. Throughput}
     \label{fig:s2c2}
@@ -126,36 +127,42 @@ Moving towards
     Quality switches          & 7          & 12          & 13             \\ \bottomrule
     \end{tabular}
     \caption{Scenario 2. Metrics Comparison}
+    \label{table:s2t1}
 \end{table}
 
 
 
 \subsection{Scenario 3}
 
-This section will analysis a lte scenario. There will be six UEs watching video at the same time.
+This section will analysis a lte scenario with poor conditions. There will be six UEs watching video at the same time.
 three of them have stationary and the remaining three are randomly moving.
 In this scenario, fifteen bitrates are used.
 
-The scenario has one \textit{eNodeB}, with one antenna. An there is also a building. The 
+The scenario has one \textit{eNodeB}, with one antenna. And there is also a building. The 
 \autoref{fig:s3i1} shows a radio enviroment map of the scenario.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{img/s3i1.pdf}
+    \includegraphics[width=0.95\textwidth]{img/s3i1.pdf}
     \caption{Scenario 3. Radio Environment Map}
     \label{fig:s3i1}
 \end{figure}
 
-\begin{table}[]
+\begin{table}[h]
     \begin{tabular}{@{}llrrrr@{}}
     \toprule
-                               &         & \multicolumn{1}{l}{BOLA} & \multicolumn{1}{l}{DASH} & \multicolumn{1}{l}{DASH throughpu} & \multicolumn{1}{l}{HLS} \\ \midrule
-    \multirow{3}{*}{QoE Score} & Average & 0.3222501667             & 0.3389108333             & 0.3891433333                       & 0.3908161667            \\
-                               & Max     & 0.47895                  & 0.568955                 & 0.621531                           & 0.631055                \\
-                               & Min     & 0.245517                 & 0.245722                 & 0.220542                           & 0.231055                \\ \cmidrule(l){2-6} 
+    &         & \multicolumn{1}{l}{BOLA} & \multicolumn{1}{l}{DASH} & \multicolumn{1}{l}{DASH throughput} & \multicolumn{1}{l}{HLS} \\ \midrule
+    \multirow{3}{*}{QoE Score} & Average & 0.3222501667             & 0.3389108333             & 0.3891433333                        & 0.3908161667            \\
+                               & Max     & 0.47895                  & 0.568955                 & 0.621531                            & 0.631055                \\
+                               & Min     & 0.245517                 & 0.245722                 & 0.220542                            & 0.231055                \\ \bottomrule
     \end{tabular}
     \caption{Scenerio 3. QoE Score}
+    \label{table:s3t1}
 \end{table}
+
+With the results shown in the \autoref{table:s3t1}, we conclude that on average,
+the bandwidth based algorithms have higher \textit{QoE} scores. But the other two
+algorithms have less difference between their highest and lowest scores.
 
 \subsection{Scenario 4}
 
@@ -172,7 +179,15 @@ to different clients. In this analysis, the \textit{Jain Fairness Index (JFI)}
 
 where  $C$ are the Clients and $\bar{B}$ are the Average Throughputs
 
-\begin{table}[]
+This testing scenario uses ten \textit{UEs} at a time in a \textit{LTE} scenario.
+
+Based on the results presented in the \autoref{table:s4t1}, the throughput based algorithms 
+have the least fairness index. That is as expected seeing the results of the last scenario
+because they had greater differences of performance between \textit{UEs}. That is also true in
+this case, with \textit{HLS} having the single highest throughput. Nevertheless, all the
+the algorithms are in a very resonable range, greater than 0.9.
+
+\begin{table}[h]
     \centering
     \begin{tabular}{@{}lrrrr@{}}
     \toprule
@@ -181,9 +196,19 @@ where  $C$ are the Clients and $\bar{B}$ are the Average Throughputs
     MAX & 10289.8                  & 10289.8                  & 19953.9                             & \textbf{20006.4}        \\ \bottomrule
     \end{tabular}
     \caption{Scenerio 4. Fairness Comparison}
+    \label{table:s4t1}
 \end{table}
 
 \section{Conclusions}
 \label{sec:simconclu}
 
-limitations
+These testing scenarios are only a small part of what the \textit{ABR} module can do with \textit{ns-3}.
+All the implemented adaptation algorithms are compered in some interesting cases. But more importantly
+is to show the potential of this module and also the improvement that can be made. 
+
+Due to limitations with \textit{ns-3}, the BOLA implementation is not complete. There some 
+bugs like enabling REM will crush the simulation but the output of the REM is done without
+problems. Or sometimes the simulations stops caused by some internal data structure corruption.
+
+The implementation of BOLA was a really challenging task for this project, and its complexity 
+translates, in some cases, in better performance.
