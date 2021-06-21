@@ -38,8 +38,8 @@ In addition, other metrics will be used that may also be of interest. And they a
     \end{itemize}
 \end{itemize}
 
-\section{Example script}
-\label{sec:example}
+% \section{Example script}
+% \label{sec:example}
 
 
 \section{Scenarios}
@@ -52,52 +52,114 @@ of the BOLA and the throughput rule of \textit{dash.js} simply as \textit{DASH}.
 \subsection{Scenario 1}
 This section will take a look a basic network scenario. To be as simply as possible, the will be 
 only two nodes linked with a \texttt{PointToPoint} connection. The simulation time is 50 seconds 
-and the datarate will vary in time.
+and the datarate will vary in time. In this scenario, seven bitrates are used.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{img/s1c1.pdf}
-    \caption{Scenario 1. Quality vs time.}
+    \caption{Scenario 1. Quality vs time}
     \label{fig:s1c1}
 \end{figure}
+
+By looking at the \autoref{fig:s1c1}, the first thing noticeable is that the \textit{HLS} and the \textit{DASH throughput}'s
+quality functions are almost the same. \textit{BOLA} reached a little bit earier to the quality index 5 and 
+sustained a good overall performance.
+The combination of both rules in \textit{DASH} seems to work pretty nicely, with one exception of going
+down to quality index 2 almost at the end of the simulation. 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{img/s1c2.pdf}
-    \caption{Scenario 1. CDF quality.}
+    \caption{Scenario 1. CDF quality}
     \label{fig:s1c2}
 \end{figure}
 
+The \autoref{fig:s1c2} show a \textit{Cumulative Distribution Function (CDF)}. In this 
+case, the \textit{CDF} shows the video quality choice statistics in the form of percentages. 
+Both \textit{HLS} and \textit{DASH throughput} obteined a higher quality during most of 
+the simulation time and never played segments from the lowest quality.
 
 \subsection{Scenario 2}
 
-This section will analysis two lte scenarios. There will be six UEs watching video at the same time.
-three of them have stationary and the remaining three are randomly moving. The first case will be 
-a scenario with good conditions and the second one will be with relatively poor conditions.
+\subsubsection{Scenario 2.1}
 
-The scenario has one \textit{eNodeB}, with one antenna. An there is also a building. The 
-\autoref{fig:s2i1} shows a radio enviroment map of the scenario.
+Standing still
+
+\subsubsection{Scenario 2.2}
+
+Moving away
+
+50 moving 20m/s
+
+\subsubsection{Scenario 2.3}
+
+Moving towards
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{img/s2i1.pdf}
-    \caption{Scenario 2. Radio Environment Map.}
-    \label{fig:s2i1}
+    \includegraphics[width=0.9\textwidth]{img/s2c1.pdf}
+    \caption{Scenario 2. Buffer Status}
+    \label{fig:s2c1}
 \end{figure}
 
-\subsubsection{Good Conditions}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{img/s2c2_1.pdf}
+\end{figure}
+
+\begin{figure}[h]
+    \centering    
+    \includegraphics[width=\textwidth]{img/s2c2_2.pdf}
+    \caption{Scenario 2. Throughput}
+    \label{fig:s2c2}
+\end{figure}
 
 
-\subsubsection{Poor Conditions}
+\begin{table}[]
+    \centering
+    \begin{tabular}{@{}llll@{}}
+    \toprule
+                              & Non-Moving & Moving Away & Moving Towards \\ \midrule
+    QoE Score                 & 0.812078   & 0.535326    & 0.701826       \\
+    Average throughput (Mbps) & 23.0487    & 8.1720      & 12.7028        \\
+    Time watched (s)          & 48.9       & 38.0        & 48.485         \\
+    Quality switches          & 7          & 12          & 13             \\ \bottomrule
+    \end{tabular}
+    \caption{Scenario 2. Metrics Comparison}
+\end{table}
+
 
 
 \subsection{Scenario 3}
 
-Mixing applications
+This section will analysis a lte scenario. There will be six UEs watching video at the same time.
+three of them have stationary and the remaining three are randomly moving.
+In this scenario, fifteen bitrates are used.
 
+The scenario has one \textit{eNodeB}, with one antenna. An there is also a building. The 
+\autoref{fig:s3i1} shows a radio enviroment map of the scenario.
 
-\section{Fairness}
-\label{sec:fairness}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/s3i1.pdf}
+    \caption{Scenario 3. Radio Environment Map}
+    \label{fig:s3i1}
+\end{figure}
+
+\begin{table}[]
+    \begin{tabular}{@{}llrrrr@{}}
+    \toprule
+                               &         & \multicolumn{1}{l}{BOLA} & \multicolumn{1}{l}{DASH} & \multicolumn{1}{l}{DASH throughpu} & \multicolumn{1}{l}{HLS} \\ \midrule
+    \multirow{3}{*}{QoE Score} & Average & 0.3222501667             & 0.3389108333             & 0.3891433333                       & 0.3908161667            \\
+                               & Max     & 0.47895                  & 0.568955                 & 0.621531                           & 0.631055                \\
+                               & Min     & 0.245517                 & 0.245722                 & 0.220542                           & 0.231055                \\ \cmidrule(l){2-6} 
+    \end{tabular}
+    \caption{Scenerio 3. QoE Score}
+\end{table}
+
+\subsection{Scenario 4}
+
+\subsubsection{Jain Fairness Index}
 
 Fairness metrics are used to determine whether the adaptation 
 algorithm is able to deliver an equitable share of the network bandwidth 
@@ -109,6 +171,17 @@ to different clients. In this analysis, the \textit{Jain Fairness Index (JFI)}
 \end{equation}
 
 where  $C$ are the Clients and $\bar{B}$ are the Average Throughputs
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{@{}lrrrr@{}}
+    \toprule
+        & \multicolumn{1}{l}{BOLA} & \multicolumn{1}{l}{DASH} & \multicolumn{1}{l}{DASH throughput} & \multicolumn{1}{l}{HLS} \\ \midrule
+    JFI & \textbf{0.972185193}     & 0.9716453768             & 0.9271291449                        & 0.929252551             \\
+    MAX & 10289.8                  & 10289.8                  & 19953.9                             & \textbf{20006.4}        \\ \bottomrule
+    \end{tabular}
+    \caption{Scenerio 4. Fairness Comparison}
+\end{table}
 
 \section{Conclusions}
 \label{sec:simconclu}
