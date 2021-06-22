@@ -60,15 +60,15 @@ and the datarate will vary in time. In this scenario, seven bitrates are used.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{img/space.png}
-    \includegraphics[width=0.6\textwidth]{img/scenario1.png}
+    % \includegraphics[width=0.3\textwidth]{img/space.png}
+    \includegraphics[width=0.45\textwidth]{img/scenario1.png}
     \caption{Scenario 1}
     \label{fig:scenario1}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/s1c1_1.pdf}
+    \includegraphics[width=\textwidth]{img/s1c1_1.pdf}
     \caption{Scenario 1. Quality vs time}
     \label{fig:s1c1}
 \end{figure}
@@ -79,9 +79,9 @@ sustained a good overall performance.
 The combination of both rules in \textit{DASH} seems to work pretty nicely, with one exception of going
 down to quality index 2 almost at the end of the simulation. 
 
-\begin{figure}[h]
+\begin{figure}[]
     \centering
-    \includegraphics[width=0.7\textwidth]{img/s1c2.pdf}
+    \includegraphics[width=0.8\textwidth]{img/s1c2.pdf}
     \caption{Scenario 1. CDF quality}
     \label{fig:s1c2}
 \end{figure}
@@ -97,7 +97,7 @@ the simulation time and never played segments from the lowest quality.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{img/scenario2.png}
+    \includegraphics[width=\textwidth]{img/scenario2.png}
     \caption{Scenario 2}
     \label{fig:scenario2}
 \end{figure}
@@ -112,12 +112,6 @@ will be placed at a reasonable distance from the \textit{eNodeB}. In the second 
 is moving with a constant velocity away from the \textit{eNodeB}. Finally, the \textit{UE} is placed 
 a little bit further and walks towards the \textit{eNodeB}.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.9\textwidth]{img/s2c1.pdf}
-    \caption{Scenario 2. Buffer Status}
-    \label{fig:s2c1}
-\end{figure}
 
 The \autoref{fig:s2c1} shows the buffer status as a function of time. What moving away from 
 the \textit{eNodeB} really does is to decrease the available bandwidth and finally the \textit{UE}
@@ -127,11 +121,21 @@ Within the wireshark statistics tools, by selecting the throughput option within
 it is possible to display throughput graphs of the \textit{UEs}. In the \autoref{fig:s2c2}, the first
 graph show that the \textit{UE} approaching the \textit{eNodeB} performs relatively well. By contrast,
 the throughput of the second \textit{UE} drops significantly every time it goes further from the \textit{eNodeB}.
-All these behaviours are reflected in the \autoref{table:s2t1} with some \textit{QoE} metrics.
+All 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{img/space.png}
+  \includegraphics[width=\textwidth]{img/space.png}
+  \includegraphics[width=\textwidth]{img/s2c1.pdf}
+  \caption{Scenario 2. Buffer Status}
+  \label{fig:s2c1}
+\end{figure}
+
 
 \begin{figure}[h]
     \centering    
     \includegraphics[width=\textwidth]{img/s2c2_1.pdf}
+    \includegraphics[width=\textwidth]{img/space.png}
     \includegraphics[width=\textwidth]{img/space.png}
     \includegraphics[width=\textwidth]{img/s2c2_2.pdf}
     \caption{Scenario 2. Throughput}
@@ -153,9 +157,10 @@ All these behaviours are reflected in the \autoref{table:s2t1} with some \textit
     \label{table:s2t1}
 \end{table}
 
-
+\clearpage
 
 \subsection{Scenario 3}
+
 
 This section provides an analysis of a \textit{LTE} scenario with poor conditions. There will be six \textit{UEs} watching video at the same time.
 three of them remain stationary and the remaining three are randomly moving.
@@ -163,32 +168,36 @@ In this scenario, fifteen bitrates are used.
 The only changing factor is the position of some \textit{UEs}, 
 the rest of the parameter remains the same. There are only one \textit{eNodeB}, meaning there 
 is no possibility to handover.
+\begin{table}[h]
+  \begin{tabular}{@{}llrrrr@{}}
+  \toprule
+  &         & \multicolumn{1}{l}{BOLA} & \multicolumn{1}{l}{DASH} & \multicolumn{1}{l}{DASH throughput} & \multicolumn{1}{l}{HLS} \\ \midrule
+  \multirow{3}{*}{QoE Score} & Average & 0.3222501667             & 0.3389108333             & 0.3891433333                        & 0.3908161667            \\
+                             & Max     & 0.47895                  & 0.568955                 & 0.621531                            & 0.631055                \\
+                             & Min     & 0.245517                 & 0.245722                 & 0.220542                            & 0.231055                \\ \bottomrule
+  \end{tabular}
+  \caption{Scenerio 3. QoE Score}
+  \label{table:s3t1}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.97\textwidth]{img/s3i1.pdf}
+  \caption{Scenario 3. Radio Environment Map}
+  \label{fig:s3i1}
+\end{figure}
+
 
 The scenario has one \textit{eNodeB}, with one antenna, and a residential building. The 
 \autoref{fig:s3i1} shows a radio enviroment map of the scenario.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.95\textwidth]{img/s3i1.pdf}
-    \caption{Scenario 3. Radio Environment Map}
-    \label{fig:s3i1}
-\end{figure}
 
-\begin{table}[h]
-    \begin{tabular}{@{}llrrrr@{}}
-    \toprule
-    &         & \multicolumn{1}{l}{BOLA} & \multicolumn{1}{l}{DASH} & \multicolumn{1}{l}{DASH throughput} & \multicolumn{1}{l}{HLS} \\ \midrule
-    \multirow{3}{*}{QoE Score} & Average & 0.3222501667             & 0.3389108333             & 0.3891433333                        & 0.3908161667            \\
-                               & Max     & 0.47895                  & 0.568955                 & 0.621531                            & 0.631055                \\
-                               & Min     & 0.245517                 & 0.245722                 & 0.220542                            & 0.231055                \\ \bottomrule
-    \end{tabular}
-    \caption{Scenerio 3. QoE Score}
-    \label{table:s3t1}
-\end{table}
 
 With the results shown in the \autoref{table:s3t1}, we conclude that on average,
 the bandwidth based algorithms have higher \textit{QoE} scores. But the other two
 algorithms have less difference between their highest and lowest scores.
+
+\clearpage
 
 \subsection{Scenario 4}
 
@@ -199,11 +208,25 @@ algorithm is able to deliver an equitable share of the network bandwidth
 to different clients. In this analysis, the \textit{Jain Fairness Index (JFI)}
 \cite{jfi} is used. The \textit{JFI} is calculated by this formula:
 
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.95\textwidth]{img/s4i1.pdf}
+%   \caption{Scenario 4. Radio Environment Map}
+%   \label{fig:s4i1}
+% \end{figure}
+
 \begin{equation}
     JFI=\frac{\bigg(\sum\limits_{c\in C}\bar{B}\bigg)^2}{\left | C \right |\sum\limits_{c\in C}(\bar{B})^2}
 \end{equation}
 
 where  $C$ are the Clients and $\bar{B}$ are the Average Throughputs
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{img/space.png}
+  \includegraphics[width=0.9\textwidth]{img/space.png}
+\end{figure}
 
 This testing scenario uses ten \textit{UEs} and one \textit{eNodeB} at a time in a \textit{LTE} environment.
 
@@ -212,6 +235,14 @@ have the least fairness index. That is as expected seeing the results of the las
 because they had greater differences of performance between \textit{UEs}. That is also true in
 this case, with \textit{HLS} having the single highest throughput. Nevertheless, all the
 the algorithms are in a very resonable range, greater than 0.9.
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{img/space.png}
+  \includegraphics[width=0.9\textwidth]{img/space.png}
+\end{figure}
+
 
 \begin{table}[h]
     \centering
@@ -224,6 +255,19 @@ the algorithms are in a very resonable range, greater than 0.9.
     \caption{Scenerio 4. Fairness Comparison}
     \label{table:s4t1}
 \end{table}
+
+
+% \clearpage
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{img/s4i2.pdf}
+  \caption{Scenario 4. Radio Environment Map}
+  \label{fig:s4i2}
+\end{figure}
+
+
+
+\clearpage
 
 \section{Conclusions}
 \label{sec:simconclu}
