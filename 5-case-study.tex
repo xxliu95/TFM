@@ -24,7 +24,10 @@ In addition, other metrics will be used that may also be of interest. And they a
     \item \textbf{Paused times}. The number of times the playback paused.
     \item \textbf{Time at each quality}. The time spent at each quality.
     \item \textbf{Buffer status}. The buffer status in milliseconds of content as a function of time.
-    \item \textbf{QoE Score}. This is a score based on various metrics, the formula is as follows:
+    \item \textbf{QoE Score}. This is a score based on various metrics.
+    
+    The QoE score is defined for this thesis in order to compare the different algorithms. It 
+    ranges from 0 to 1, the greater the score the better the performance. The formula is as follows:
     \begin{equation}
         QoE\ score = \frac{t_w-pb_s-\sum_{i=1}^{M} \frac{t_i}{2}\cdot (\frac{1}{2}-\frac{i+1}{M})-\frac{1}{2}\cdot (qs+pt)}{simulation\ time}
     \end{equation}
@@ -36,6 +39,7 @@ In addition, other metrics will be used that may also be of interest. And they a
         \item[$\circ$] $qs$ 		                            Quality switches
         \item[$\circ$] $pt$ 		                            Paused times
     \end{itemize}
+
 \end{itemize}
 
 % \section{Example script}
@@ -56,7 +60,15 @@ and the datarate will vary in time. In this scenario, seven bitrates are used.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{img/s1c1.pdf}
+    \includegraphics[width=\textwidth]{img/space.png}
+    \includegraphics[width=0.6\textwidth]{img/scenario1.png}
+    \caption{Scenario 1}
+    \label{fig:scenario1}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/s1c1_1.pdf}
     \caption{Scenario 1. Quality vs time}
     \label{fig:s1c1}
 \end{figure}
@@ -69,7 +81,7 @@ down to quality index 2 almost at the end of the simulation.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{img/s1c2.pdf}
+    \includegraphics[width=0.7\textwidth]{img/s1c2.pdf}
     \caption{Scenario 1. CDF quality}
     \label{fig:s1c2}
 \end{figure}
@@ -79,10 +91,21 @@ case, the \textit{CDF} shows the video quality choice statistics in the form of 
 Both \textit{HLS} and \textit{DASH throughput} obteined a higher quality during most of 
 the simulation time and never played segments from the lowest quality.
 
+\clearpage
+
 \subsection{Scenario 2}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/scenario2.png}
+    \caption{Scenario 2}
+    \label{fig:scenario2}
+\end{figure}
+
 This scenario will find out what will happen if an \textit{UE} stands still, or if it is moving away
-or towards the \textit{eNodeB}.
+or towards the \textit{eNodeB}. The only changing factor is the position of the \textit{UE}, 
+the rest of the parameter remains the same. There are only one \textit{eNodeB}, meaning there 
+is no possibility to handover.
 
 This setup will be using only the \textit{HLS} algorithm. In the first simulation, the \textit{UE}
 will be placed at a reasonable distance from the \textit{eNodeB}. In the second one, the \textit{UE}
@@ -134,9 +157,12 @@ All these behaviours are reflected in the \autoref{table:s2t1} with some \textit
 
 \subsection{Scenario 3}
 
-This section will analysis a lte scenario with poor conditions. There will be six \textit{UEs} watching video at the same time.
+This section provides an analysis of a \textit{LTE} scenario with poor conditions. There will be six \textit{UEs} watching video at the same time.
 three of them remain stationary and the remaining three are randomly moving.
 In this scenario, fifteen bitrates are used.
+The only changing factor is the position of some \textit{UEs}, 
+the rest of the parameter remains the same. There are only one \textit{eNodeB}, meaning there 
+is no possibility to handover.
 
 The scenario has one \textit{eNodeB}, with one antenna, and a residential building. The 
 \autoref{fig:s3i1} shows a radio enviroment map of the scenario.

@@ -25,8 +25,7 @@ This section will go over several networking concepts that have a specific meani
   The \texttt{Application} class provides functions for controlling the representations of the simulated
   version of user-level applications.
   \item[] \textbf{Channel}: A \texttt{Channel} in \textit{ns-3} is an abstraction of the basic communication 
-  subnetwork in which \texttt{Nodes} are connected in. It can be as simple as a wire or as complicated as a
-  large Ethernet switch.
+  subnetwork in which \texttt{Nodes} are connected in. It can be as simple as a wire or as complicated as a Ethernet switch.
   \item[] \textbf{Net Device}: A \texttt{NetDevice} in \textit{ns-3} simulates a \textit{Network Interface Card (NIC)}
   and the software controlling the \textit{NIC}. A \texttt{NetDevice} is installed in a \texttt{Node} to allow 
   it to communicate over \texttt{Channels} with other \texttt{Nodes} in the simulation.
@@ -168,7 +167,7 @@ if needed.
 
 There are a few implementations of \texttt{Applications} in \textit{ns-3}:
 \begin{itemize}[topsep=0pt, itemsep=0pt]
-  \item \texttt{BuldSendApplication}. This traffic generator basically sends data as quickly as possible
+  \item \texttt{BulkSendApplication}. This traffic generator basically sends data as quickly as possible
   until MaxBytes is reached or the application is terminated (if MaxBytes is zero)
   \item \texttt{OnOffApplication}. After \texttt{StartApplication} is called, this traffic generator 
   alternates between "On" and "Off" states.
@@ -177,14 +176,14 @@ There are a few implementations of \texttt{Applications} in \textit{ns-3}:
 \end{itemize}
 
 \subsection{Buildings Module}
-The Buildings module provide various models, but these are the most relevant for this thesis:
+The Buildings module provide various models, but the following are the most relevant for this thesis:
 
 \subsubsection{Building class}
 
 The \texttt{Building} model implements and tries to simulate real-life buildings, which affects
 wireless communications in different ways.
 
-A \texttt{Building} can be residential, office or commertial, has different types of external
+A \texttt{Building} can be residential, office or commertial and has different types of external
 wall (wood, concrete with/out windows, stone blocks), has a number of floors and rooms in each floor.
 
 Some limitations have to be made:
@@ -193,7 +192,7 @@ Some limitations have to be made:
   \item The walls needs to be parallel to the cardinal coordinates.
   \item A \texttt{Building} is a grid of rooms, with z axis as the floor number and the x and y room
   indexes start from 1 and increses along the x and y axis.
-  \item All the rooms are the same size.
+  \item All the rooms are of the same size.
 \end{itemize}
 
 \subsubsection{MobilityBuildingInfo class}
@@ -265,6 +264,8 @@ or through the \textit{Dynamic Host Configuration Protocol (DHCP)}.
 
 Full bidirectional TCP with connection setup and close logic is supported by the native \textit{ns-3} TCP model.
 Various TCP congestion algorithms are also available, such as New Reno, Cubic, HighSpeed, etc.
+The \textit{TCP} congestion algortihms affects on the adaptation algorithms, but it will
+not be the focus on this thesis.
 
 
 \subsection{Mobility Module}
