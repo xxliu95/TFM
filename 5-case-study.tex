@@ -4,8 +4,8 @@
 This chapter will test the adaptation algorithms implemented in the \textit{ABR}
 module from the \autoref{chap:abrmodule} in various simulated scenarios. The \autoref{sec:metrics}
 will present the metrics used for the comparisons. The \autoref{sec:scenarios} will 
-go through all the simulation scripts and its results. The \autoref{sec:fairness} will
-analyse the fairness of the adaptation algorithms. Finally, the \autoref{sec:simconclu},
+go through all the simulation scripts and its results,
+analyse the performance and fairness of the adaptation algorithms. Finally, the \autoref{sec:simconclu},
 will discuss the conclusions and limitations of the \textit{ABR} module.
 
 % \section{Introduction}
@@ -62,7 +62,7 @@ and the datarate will vary in time. In this scenario, seven bitrates are used.
 \end{figure}
 
 By looking at the \autoref{fig:s1c1}, the first thing noticeable is that the \textit{HLS} and the \textit{DASH throughput}'s
-quality functions are almost the same. \textit{BOLA} reached a little bit earier to the quality index 5 and 
+quality functions are almost the same line. \textit{BOLA} reached a little bit earier to the quality index 5 and 
 sustained a good overall performance.
 The combination of both rules in \textit{DASH} seems to work pretty nicely, with one exception of going
 down to quality index 2 almost at the end of the simulation. 
@@ -134,11 +134,11 @@ All these behaviours are reflected in the \autoref{table:s2t1} with some \textit
 
 \subsection{Scenario 3}
 
-This section will analysis a lte scenario with poor conditions. There will be six UEs watching video at the same time.
-three of them have stationary and the remaining three are randomly moving.
+This section will analysis a lte scenario with poor conditions. There will be six \textit{UEs} watching video at the same time.
+three of them remain stationary and the remaining three are randomly moving.
 In this scenario, fifteen bitrates are used.
 
-The scenario has one \textit{eNodeB}, with one antenna. And there is also a building. The 
+The scenario has one \textit{eNodeB}, with one antenna, and a residential building. The 
 \autoref{fig:s3i1} shows a radio enviroment map of the scenario.
 
 \begin{figure}[h]
@@ -179,7 +179,7 @@ to different clients. In this analysis, the \textit{Jain Fairness Index (JFI)}
 
 where  $C$ are the Clients and $\bar{B}$ are the Average Throughputs
 
-This testing scenario uses ten \textit{UEs} at a time in a \textit{LTE} scenario.
+This testing scenario uses ten \textit{UEs} and one \textit{eNodeB} at a time in a \textit{LTE} environment.
 
 Based on the results presented in the \autoref{table:s4t1}, the throughput based algorithms 
 have the least fairness index. That is as expected seeing the results of the last scenario

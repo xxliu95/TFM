@@ -28,15 +28,15 @@ The ABR module provides:
   requests from clients and sends the multimedia segments requested. It is an implementation of 
   \texttt{ns3::Application}.
   \item \texttt{\textbf{AbrVariables}}. This class is used for storing common variables between the clients
-  and the servers. It contains the definition of Segment, Representation, AbrTask, etc.
+  and the servers. It contains the definition of Segment, Representation, etc.
   \item \texttt{\textbf{AbrHelper}}. This is a Helper class for the ABR module. It is the responsible 
   for managing the instances of the ABR clients and servers. In addition, \texttt{AbrHelper} can be
   used for extracting QoS and QoE metrics.
-  \item \texttt{\textbf{AbrAlgorithm}}. This is a base class to be implemented with different 
-  adaptation algorithms.
-  \item \texttt{\textbf{HLSjs}}. This is an implementation of \texttt{AbrAlgorithm} based on \cite{hls3}.
-  \item \texttt{\textbf{DASHjs}}. This is an implementation of \texttt{AbrAlgorithm} based on \cite{dash3}. 
-  It also contains the implementation of the buffer based BOLA algorithm.
+  \item \texttt{\textbf{AbrAlgorithm}}. This is a base class as an interface for the different 
+  adaptation algorithms implementations.
+  \item \texttt{\textbf{HLSjs}}. This is an implementation of \texttt{AbrAlgorithm} based on \textit{hls.js}\cite{hls3}.
+  \item \texttt{\textbf{DASHjs}}. This is an implementation of \texttt{AbrAlgorithm} based on \textit{dash.js}\cite{dash3}. 
+  It also contains the implementation of the buffer based algorithm BOLA.
   \item \texttt{\textbf{abr-example.cc}}. An basic example script with two nodes linked with a
   \texttt{PointToPoint} connection and a unstable connection.
 \end{itemize}
@@ -65,13 +65,14 @@ The \texttt{AbrClient} is an implementation of \texttt{ns3::Application}. This c
 uses an implementation of \texttt{AbrAlgorithm} to create HTTP-like requests to the 
 \texttt{AbrServer} and mimics the playing of the media content.
 
-The \texttt{AbrClient} is created with the \texttt{AbrHelper} and the server address and port as
+The \texttt{AbrClient} is created with the \texttt{AbrHelper} and the server address and
+listening port as
 parameters.
-Then the client application needs to be installed
-on the client nodes. When the simulation starts, the function \texttt{StartApplication} is called
-and the simulator is scheduled to call \texttt{HandlePlay} function to simulate video watching.
+The client application needs to be installed
+on the client \texttt{Nodes}. When the simulation starts, the function \texttt{StartApplication} is called
+and the simulator is scheduled to call the client's \texttt{HandlePlay} function to simulate video watching.
 The client will create a new socket, in this case a TCP socket, to connect with the server.
-The socket is set will various callback functions:
+The socket is set with various callback functions:
 \begin{itemize}[noitemsep,topsep=0pt]
   \item \texttt{ConnectionSucceded}. is called if the connection succeeded. Then it calls
   the \texttt{CheckAlgorithm} function.
@@ -117,12 +118,12 @@ ${3^{rd}}$ segment".
 
 
 The \texttt{AbrServer} is created with the \texttt{AbrHelper} and the listening port as the 
-parameter. Then the
-server application needs to be installed on the server node. When the simulation starts, the 
-function \texttt{StartApplication} is called. The server will create a socket, binds it and starts
+parameter. The
+server application needs to be installed on the server \texttt{Node}. When the simulation starts, the 
+function \texttt{StartApplication} is called. The server will create and bind a socket, and starts
 to listen.
 The socket is set will callback functions. When the sockets are connected, the server 
-will schedule new callbacks to handle reading requests and sending data.
+will schedule the callbacks to handle reading requests and sending data.
 
 
 \subsection{AbrVariables}
@@ -226,7 +227,7 @@ This class is based on the implementation build by the \textit{DASH Industry For
 name. \texttt{DASHjs.cc} is a simplified version of \textit{dash.js}. See \autoref{sec:dashjs} for more details.
 
 \textit{dash.js} works with a combination of rules. Each rule returns a \texttt{SwitchRequest}.
-A \texttt{SwitchRequest} is an object that indicates, between others, the next representation, the 
+A \texttt{SwitchRequest} is an object that indicates the next representation to request, the 
 request priority, etc. The priorities of the \texttt{SwitchRequest} can be \texttt{NO\_CHANGE}, 
 \texttt{DEFAULT}, \texttt{STRONG} or \texttt{WEAK}.
 
@@ -277,7 +278,7 @@ current representation.
   \end{minipage}
   
   \item \textbf{\texttt{BolaRule}}. This is a simplified implementation of the buffer based algorithm
-  BOLA introduced in \autoref{sec:abralgo}.
+  BOLA introduced in \autoref{sec:bufferalgo}.
 
   BOLA has three states:
   \begin{itemize}[noitemsep, topsep=0pt]
@@ -287,7 +288,7 @@ current representation.
   \end{itemize}
 
   The main methods of BOLA is \texttt{BolaRule} and \texttt{GetQualityFromBufferLevel}.
-  This last method uses a score calculated, using BOLA's parameters such as playback utility or 
+  This last method uses a score calculated, using BOLA's parameters such as playback utility and 
   playback smoothness, for each representation and chooses the representation
   with the highest score.
 \end{itemize}
