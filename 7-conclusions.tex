@@ -10,32 +10,46 @@ based on QoE and fairness metrics.
 
 First, the study begin by familiarizing with the simulation software \textit{ns-3}.
 It was really challenging at first, due to the lack of grafical user interface
-and relatively small community to help solving problems. After learning scripting
-in \textit{ns-3}, implementing new modules in \textit{ns-3} is
+and relatively small community to help solving problems. Learnt scripting
+and implementing new modules in \textit{ns-3}.
 
+Also, become familiar the \textit{LTE} technologies. Including the architecture 
+of the \textit{EPC}, radio interface, wireless fundamentals and protocol stack layers.
+The \textit{LTE} module in \textit{ns-3} made possible the simulation of \textit{ns-3}
+applications in mobile scenarios.
 
-////// Falta algunos pesodocodigos y diagramas 
+To achieve the objectives proposed, the design of a new \textit{ns-3} module is developed.
+And also the implementation and integration with other \textit{ns-3} modules. The implemented 
+\textit{ABR} module mimics real-world video players behaviour and
+can work as a framework to test new adaptation algorithms, and extract
+metrics of the simulation. The most difficult part was the implementation of the 
+\textit{BOLA} algorithm, it was really complex and hard to understand. An additional
+feature was discarted, but can be done in futere work is to parse MPD files as a
+input for the simulation.
 
-QoE data 
+Finally, various simulations are made to compare \textit{QoE} and fairness metric between
+the implemented \textit{ABR} adaptation algorithms. This new module has its limitations
+and can be improved with future work. 
 
-mimic real-world video players behaviour
 
 
 \section{Future Work}
 
-More ABR rules
+These are possible improvements for future work:
 
-
-More interesting test cases 
-
-
-Traffic shaping
-
-
-TCP congestion control
-
-
-X2 handover
+\begin{itemize}
+  \item \textbf{Implement more adaptation algorithms}. To be able to compared more existing
+  adaptation algorithms or even put to test new designs of algorithms.
+  \item \textbf{Traffic shapping}. To analyse the effect of applying traffic shapping techniques 
+  like token bucket and leaky bucket.
+  \item \textbf{TCP congestion control}. As commented on the thesis, the \textit{TCP} congestion 
+  control influents the adaptation algorithms. It could be interesting testing scenarios.
+  \item \textbf{X2 Handover}. The scripts implemented is limited to one \textit{eNodeB}. There 
+  is a possibility in \textit{ns-3} to use multiple \textit{eNodeB} and handover over the \textit{X2}
+  interface.
+  \item \textbf{5G}. There is a new \textit{5G} module in \textit{ns-3} although in its very 
+  early stages. \textit{5G} simulation scenarios could be also worth to look at.
+\end{itemize}
 
 
 5g
